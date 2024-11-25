@@ -25,12 +25,18 @@ jobs:
         run: npm run build
 
       # Maak een GitHub Issue bij mislukking
-      - name: Create GitHub Issue on failure
-        if: failure()  # Dit zorgt ervoor dat de stap alleen wordt uitgevoerd als de build faalt
+      - name: Create issue when build fails
+        if: failure()
+        run: |
+          echo "The build has failed for the Svelte application." > issue-content.txt
+          echo "Please investigate the error in the GitHub Actions logs." >> issue-content.txt
+          echo "Failure details: ${{ github.run_id }}" >> issue-content.txt
+
+      # Maak een GitHub Issue met de inhoud uit het bestand
+      - name: Create GitHub Issue from file
+        if: failure()
         uses: peter-evans/create-issue-from-file@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}  # Dit is de token waarmee GitHub acties toegang krijgen tot de repository
+          token: ${{ secrets.GITHUB_TOKEN }}
           title: "Build Failure - Svelte Application"
-          body: |
-            The build for the Svelte application has failed.
-            Please investigate the error.
+          content-filepath: issue-content.txt
