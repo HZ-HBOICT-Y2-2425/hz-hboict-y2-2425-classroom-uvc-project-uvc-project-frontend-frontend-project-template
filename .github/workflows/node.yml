@@ -3,43 +3,34 @@ name: Build and Test Svelte Application
 on: 
   push:
     branches:
-      - "**"  # Trigger on every push to any branch
+      - "**"  # Trigger op elke push naar elke branch
 
 jobs:
   build:
-    runs-on: ubuntu-latest # The build process will run on a fully configured Ubuntu server
+    runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout the latest code
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 22
 
-      # 3. Install dependencies
       - name: Install dependencies
         run: npm ci
 
-      # 4. Build the Svelte application
       - name: Build the Svelte application
         run: npm run build
 
-      # 5. (Optional) Run tests
-      # - name: Run tests
-      #   run: npm test
-
-      # 6. Notify developers if the build fails (this runs only if a step fails)
-      - name: Notify failure
-        if: failure()  # This will run only if any step in the job fails
-        uses: actions/github-script@v6
+      # Maak een GitHub Issue bij mislukking
+      - name: Create GitHub Issue on failure
+        if: failure()  # Dit zorgt ervoor dat de stap alleen wordt uitgevoerd als de build faalt
+        uses: peter-evans/create-issue-from-file@v3
         with:
-          script: |
-            const message = `Build failed on branch: ${process.env.GITHUB_REF} for commit: ${process.env.GITHUB_SHA}`;
-            // Log the failure message to GitHub Actions logs
-            console.log(message);
-            // You can also use `core.setFailed()` here, but that would mark the job as failed.
-            // core.setFailed(message);
+          token: ${{ secrets.GITHUB_TOKEN }}  # Dit is de token waarmee GitHub acties toegang krijgen tot de repository
+          title: "Build Failure - Svelte Application"
+          body: |
+            The build for the Svelte application has failed.
+            Please investigate the error.
