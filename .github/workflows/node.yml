@@ -28,11 +28,11 @@ jobs:
       - name: Build the Svelte application
         run: npm run build
 
-      # 5. (Optioneel) Voer tests uit
-      # - name: Run tests
-      #   run: npm test
-
-       # Stap om automatisch een issue aan te maken bij falen van de build
+      # Debug output
+      - name: Debug output
+        run: echo "Debug: Build step failed"
+      
+      # Stap om automatisch een issue aan te maken bij falen van de build
       - name: Create issue on failure
         if: failure()  # Alleen uitvoeren als de build mislukt
         uses: peter-evans/create-issue@v3
