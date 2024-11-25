@@ -38,7 +38,8 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const { context, core } = require('@actions/github');
-            const message = `Build failed on branch: ${context.ref} for commit: ${context.sha}`;
-            // Send a custom failure message to GitHub issues, a Slack channel, or other services
-            core.setFailed(message);  // You can replace this with other notification services if needed.
+            const message = `Build failed on branch: ${process.env.GITHUB_REF} for commit: ${process.env.GITHUB_SHA}`;
+            // Log the failure message to GitHub Actions logs
+            console.log(message);
+            // You can also use `core.setFailed()` here, but that would mark the job as failed.
+            // core.setFailed(message);
