@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # Het buildproces wordt op een volledig geconfigureerde server uitgevoerd
 
     steps:
       # 1. Haal de laatste code op
@@ -18,7 +18,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 22
 
       # 3. Installeer dependencies
       - name: Install dependencies
@@ -31,3 +31,17 @@ jobs:
       # 5. (Optioneel) Voer tests uit
       # - name: Run tests
       #   run: npm test
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: build
+    if: failure()  # Deze job wordt alleen uitgevoerd als de build faalt
+    steps:
+      - name: Create issue for build failure
+        uses: peter-evans/create-issue-from-file@v4
+        with:
+          title: "🚨 Build failed for branch ${{ github.ref }}"
+          content: |
+            The build for branch ${{ github.ref }} failed.
+            You can check the build logs [here](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}).
+          labels: bug, build-failure
