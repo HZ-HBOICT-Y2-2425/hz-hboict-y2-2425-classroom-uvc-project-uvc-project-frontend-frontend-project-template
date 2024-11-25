@@ -1,42 +1,45 @@
 name: Build and Test Svelte Application
 
-on: 
+on:
   push:
     branches:
       - "**"  # Trigger op elke push naar elke branch
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Gebruik een Ubuntu runner voor de build
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3  # Haal de laatste code op van de repository
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 22
+          node-version: 22  # Stel de juiste Node.js versie in
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci  # Installeer de afhankelijkheden
 
       - name: Build the Svelte application
-        run: npm run build
+        run: npm run build  # Voer het buildproces uit
 
-      # Maak een GitHub Issue bij mislukking
-      - name: Create issue when build fails
-        if: failure()
-        run: |
-          echo "The build has failed for the Svelte application." > issue-content.txt
-          echo "Please investigate the error in the GitHub Actions logs." >> issue-content.txt
-          echo "Failure details: ${{ github.run_id }}" >> issue-content.txt
-
-      # Maak een GitHub Issue met de inhoud uit het bestand
-      - name: Create GitHub Issue from file
-        if: failure()
-        uses: peter-evans/create-issue-from-file@v3
+      # Voeg een GitHub Issue toe als de build faalt
+      - name: Create GitHub Issue on Failure
+        if: failure()  # Dit wordt uitgevoerd als een van de vorige stappen faalt
+        uses: actions/github-script@v6  # Gebruik de GitHub API om een issue aan te maken
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          title: "Build Failure - Svelte Application"
-          content-filepath: issue-content.txt
+          script: |
+            const issueTitle = 'Build Failure - Svelte Application';
+            const issueBody = `
+              The build has failed for the Svelte application. Please investigate the error.
+              Commit: ${{ github.sha }}
+              Branch: ${{ github.ref }}
+            `;
+            const { data: issue } = await github.rest.issues.create({
+              owner: context.repo.owner,  # De eigenaar van de repository
+              repo: context.repo.repo,    # De repository naam
+              title: issueTitle,          # Titel van het issue
+              body: issueBody,            # Inhoud van het issue
+            });
+            console.log('Issue created:', issue.html_url);  # Log de URL van het gemaakte issue
