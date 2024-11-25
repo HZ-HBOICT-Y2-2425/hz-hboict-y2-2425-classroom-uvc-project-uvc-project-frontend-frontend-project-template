@@ -3,31 +3,42 @@ name: Build and Test Svelte Application
 on: 
   push:
     branches:
-      - "**"  # Trigger bij elke push naar elke branch
+      - "**"  # Trigger on every push to any branch
 
 jobs:
   build:
-    runs-on: ubuntu-latest # Het buildproces wordt op een volledig geconfigureerde server uitgevoerd
+    runs-on: ubuntu-latest # The build process will run on a fully configured Ubuntu server
 
     steps:
-      # 1. Haal de laatste code op
+      # 1. Checkout the latest code
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Installeer Node.js
+      # 2. Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 22
 
-      # 3. Installeer dependencies
+      # 3. Install dependencies
       - name: Install dependencies
         run: npm ci
 
-      # 4. Voer het buildproces uit
+      # 4. Build the Svelte application
       - name: Build the Svelte application
         run: npm run build
 
-      # 5. (Optioneel) Voer tests uit
+      # 5. (Optional) Run tests
       # - name: Run tests
       #   run: npm test
+
+      # 6. Notify developers if the build fails (this runs only if a step fails)
+      - name: Notify failure
+        if: failure()  # This will run only if any step in the job fails
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { context, core } = require('@actions/github');
+            const message = `Build failed on branch: ${context.ref} for commit: ${context.sha}`;
+            // Send a custom failure message to GitHub issues, a Slack channel, or other services
+            core.setFailed(message);  // You can replace this with other notification services if needed.
