@@ -35,7 +35,6 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     needs: build
-    if: failure()  # Deze job wordt alleen uitgevoerd als de build faalt
     steps:
       - name: Create issue for build failure
         uses: peter-evans/create-issue-from-file@v4
@@ -45,3 +44,4 @@ jobs:
             The build for branch ${{ github.ref }} failed.
             You can check the build logs [here](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}).
           labels: bug, build-failure
+
