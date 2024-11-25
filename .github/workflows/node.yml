@@ -18,7 +18,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18  # Zorg voor de juiste versie van Node.js
+          node-version: 22
 
       # 3. Installeer dependencies
       - name: Install dependencies
@@ -28,19 +28,6 @@ jobs:
       - name: Build the Svelte application
         run: npm run build
 
-      # Debug output
-      - name: Debug output
-        run: echo "Debug: Build step failed"
-      
-      # Stap om automatisch een issue aan te maken bij falen van de build
-      - name: Create issue on failure
-        if: failure()  # Alleen uitvoeren als de build mislukt
-        uses: peter-evans/create-issue@v3
-        with:
-          title: "🚨 Build failed for ${{ github.ref }}"
-          body: |
-            The build for branch `${{ github.ref }}` has failed. Please check the logs for more details.
-            - Build logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          labels: "bug, build-failure"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # 5. (Optioneel) Voer tests uit
+      # - name: Run tests
+      #   run: npm test
