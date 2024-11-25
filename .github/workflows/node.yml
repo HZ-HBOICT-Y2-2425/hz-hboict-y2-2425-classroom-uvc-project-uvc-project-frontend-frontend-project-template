@@ -18,7 +18,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 22
+          node-version: 18  # Zorg voor de juiste versie van Node.js
 
       # 3. Installeer dependencies
       - name: Install dependencies
@@ -29,8 +29,8 @@ jobs:
         run: npm run build
 
       # 5. (Optioneel) Voer tests uit
-      # - name: Run tests
-      #   run: npm test
+      - name: Run tests
+        run: npm test
 
   notify:
     runs-on: ubuntu-latest
