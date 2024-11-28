@@ -22,13 +22,12 @@
         {/each}
     </div>
 
-    <!-- Login en register knoppen -->
     <div class="flex space-x-3">
         <button class="bg-white text-green-700 text-sm px-3 py-1 rounded hover:shadow-sm">
-            Login in
+            Inloggen
         </button>
         <button class="bg-black text-white text-sm px-3 py-1 rounded hover:shadow-sm">
-            Register
+            Aanmelden
         </button>
     </div>
 </nav>
