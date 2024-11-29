@@ -1,5 +1,9 @@
 <script>
     import "../app.css";
+    import { user } from "$lib/store";
+
+    console.log("user:", $user);
+    
 </script>
 
 <h1 class="bg-lime-400">Welcome to SvelteKit</h1>

@@ -2,7 +2,7 @@
     import { user } from "$lib/store.js";
     let passwordIncorrect = false;
 
-    async function writeToConsole() {
+    async function login() {
         const name = document.getElementById("name").value;
         const password = document.getElementById("password").value;
         const url = `http://localhost:3010/user/login?user=${name}&password=${password}`;
@@ -19,11 +19,12 @@
 </script>
 
 <div>
+    <a href="/">trug</a>
     <h1>Inloggen:</h1>
-    <input id="name" value="naam">
-    <input id="password" value="wachtwoord">
+    <input id="name" placeholder="naam" autofocus>
+    <input id="password" placeholder="wachtwoord">
     {#if passwordIncorrect}
     <p>wachwoord incorrect of gebruiker incorrect</p>
     {/if}
-    <button on:click={writeToConsole}>write to console</button>
+    <button on:click={login}>write to console</button>
 </div>
