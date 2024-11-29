@@ -1,12 +1,27 @@
 <script>
-    import { user } from "$lib/store.js";
+    // import { user } from "$lib/store.js";
+    import { writable } from "svelte/store";
+    import { onMount } from "svelte";
+
     let passwordIncorrect = false;
+    let data = null;
+    let defaultData = null;
+
+    onMount(() => {
+        const storedUser = sessionStorage.getItem("user");
+        user = writable(storedUser ? storedUser : defaultData);
+
+        user.subscribe((value) => {
+            sessionStorage.setItem("user", value ? value : null);
+        });
+    });
+
+    let user = writable(defaultData);
 
     async function login() {
         const name = document.getElementById("name").value;
         const password = document.getElementById("password").value;
         const url = `http://localhost:3010/user/login?user=${name}&password=${password}`;
-        let data;
         try {
             const res = await fetch(url, {method: "GET"});
             data = await res.json();
@@ -20,11 +35,15 @@
 
 <div>
     <a href="/">trug</a>
+    {#if $user}
+        <h1>Hello {$user.name}!</h1>
+    {/if}
     <h1>Inloggen:</h1>
     <input id="name" placeholder="naam" autofocus>
     <input id="password" placeholder="wachtwoord">
     {#if passwordIncorrect}
     <p>wachwoord incorrect of gebruiker incorrect</p>
     {/if}
-    <button on:click={login}>write to console</button>
+    <button on:click={login}>login</button>
+    <!-- <button on:click={}>printUser</button> -->
 </div>

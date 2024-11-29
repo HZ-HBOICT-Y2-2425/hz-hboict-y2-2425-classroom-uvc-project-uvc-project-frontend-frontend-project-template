@@ -1,6 +1,6 @@
 <script>
     import "../app.css";
-    import { user } from "$lib/store";
+    // import { user } from "$lib/store";
 
     console.log("user:", $user);
     
