@@ -1,16 +1,14 @@
 import { writable } from 'svelte/store';
 
-// function persist(key, value) {
-//     sessionStorage.setItem(key, JSON.stringify(value));
-// }
-  
-// function writableSession(key, initialValue) {
-//     const sessionValue = JSON.parse(sessionStorage.getItem(key));
-//     if (!sessionValue) persist(key, initialValue);
+export function initializeUserStore() {
+    const storedUser = sessionStorage.getItem("user");
+    if (storedUser) {
+        user.set(JSON.parse(storedUser));
+    }
+    user.subscribe((value) => {
+        console.log("storedUser:", value);
+        sessionStorage.setItem("user", value ? JSON.stringify(value) : null);
+    });
+}
 
-//     const store = writable(sessionValue || initialValue);
-//     store.subscribe(value => persist(key, value));
-//     return store;
-// }
-
-// export const user = writable(null);
+export const user = writable(null);

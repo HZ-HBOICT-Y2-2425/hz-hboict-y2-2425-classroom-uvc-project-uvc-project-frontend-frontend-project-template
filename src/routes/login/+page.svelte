@@ -1,25 +1,12 @@
 <script>
-    // import { user } from "$lib/store.js";
-    import { writable } from "svelte/store";
     import { onMount } from "svelte";
+    import { user, initializeUserStore } from "$lib/store";
 
     let passwordIncorrect = false;
-    let data = null;
-    let defaultData = null;
-
-    let user = writable(defaultData);
+    let data;
 
     onMount(() => {
-        const storedUser = sessionStorage.getItem("user");
-        if (storedUser) {
-            user.set(JSON.parse(storedUser));
-        }
-
-        user.subscribe((value) => {
-            console.log("value:", value);
-            
-            sessionStorage.setItem("user", value ? JSON.stringify(value) : null);
-        });
+        initializeUserStore();
     });
 
     async function login() {
@@ -30,7 +17,6 @@
             const res = await fetch(url, {method: "GET"});
             data = await res.json();
             user.set(data);
-            console.log("user:", $user);
         } catch (err) {
             passwordIncorrect = true;
         }
@@ -43,11 +29,10 @@
         <h1>Hello {$user.name}!</h1>
     {/if}
     <h1>Inloggen:</h1>
-    <input id="name" placeholder="naam" autofocus>
+    <input id="name" placeholder="naam">
     <input id="password" placeholder="wachtwoord">
     {#if passwordIncorrect}
-    <p>wachwoord incorrect of gebruiker incorrect</p>
+        <p>wachwoord incorrect of gebruiker incorrect</p>
     {/if}
     <button on:click={login}>login</button>
-    <!-- <button on:click={}>printUser</button> -->
 </div>
