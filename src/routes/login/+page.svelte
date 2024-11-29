@@ -7,16 +7,20 @@
     let data = null;
     let defaultData = null;
 
+    let user = writable(defaultData);
+
     onMount(() => {
         const storedUser = sessionStorage.getItem("user");
-        user = writable(storedUser ? storedUser : defaultData);
+        if (storedUser) {
+            user.set(JSON.parse(storedUser));
+        }
 
         user.subscribe((value) => {
-            sessionStorage.setItem("user", value ? value : null);
+            console.log("value:", value);
+            
+            sessionStorage.setItem("user", value ? JSON.stringify(value) : null);
         });
     });
-
-    let user = writable(defaultData);
 
     async function login() {
         const name = document.getElementById("name").value;

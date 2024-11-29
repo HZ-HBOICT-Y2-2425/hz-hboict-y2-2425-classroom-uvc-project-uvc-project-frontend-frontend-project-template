@@ -2,7 +2,7 @@
     import "../app.css";
     // import { user } from "$lib/store";
 
-    console.log("user:", $user);
+    // console.log("user:", $user);
     
 </script>
 
