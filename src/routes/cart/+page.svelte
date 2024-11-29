@@ -1,4 +1,7 @@
-<script>
+<script> 
+
+    import '/src/app.css';
+
     let cartItems = [
       { id: 1, name: "Item 1", price: 19.99 },
       { id: 2, name: "Item 2", price: 9.99 },

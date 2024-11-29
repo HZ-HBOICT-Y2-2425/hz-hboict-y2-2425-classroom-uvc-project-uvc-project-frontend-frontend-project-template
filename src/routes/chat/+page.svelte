@@ -1,4 +1,8 @@
+
 <script>
+
+    import '/src/app.css';
+
     let messages = [
       { id: 1, sender: "You", text: "Dit is een test bericht." },
       { id: 2, sender: "User", text: "Dit is een ander test bericht." },
