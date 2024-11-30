@@ -1,8 +1,11 @@
 <script>
     import "../app.css";
-    // import { user } from "$lib/store";
+    import { user, initializeUserStore } from "$lib/store";
+    import { onMount } from "svelte";
 
-    // console.log("user:", $user);
+    onMount(() => {
+        initializeUserStore();
+    });
     
 </script>
 

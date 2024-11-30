@@ -29,10 +29,10 @@
         <h1>Hello {$user.name}!</h1>
     {/if}
     <h1>Inloggen:</h1>
-    <input id="name" placeholder="naam">
+    <input id="name" placeholder="gebruikersnaam of email">
     <input id="password" placeholder="wachtwoord">
     {#if passwordIncorrect}
-        <p>wachwoord incorrect of gebruiker incorrect</p>
+        <p>wachwoord incorrect of gebruikersnaam incorrect</p>
     {/if}
     <button on:click={login}>login</button>
 </div>
