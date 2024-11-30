@@ -12,13 +12,15 @@
     async function login() {
         const name = document.getElementById("name").value;
         const password = document.getElementById("password").value;
-        const url = `http://localhost:3010/user/login?user=${name}&password=${password}`;
-        try {
-            const res = await fetch(url, {method: "GET"});
-            data = await res.json();
-            user.set(data);
-        } catch (err) {
-            passwordIncorrect = true;
+        if (name && password) {
+            const url = `http://localhost:3010/user/login?user=${name}&password=${password}`;
+            try {
+                const res = await fetch(url, {method: "GET"});
+                data = await res.json();
+                user.set(data);
+            } catch (err) {
+                passwordIncorrect = true;
+            }
         }
     }
 </script>
