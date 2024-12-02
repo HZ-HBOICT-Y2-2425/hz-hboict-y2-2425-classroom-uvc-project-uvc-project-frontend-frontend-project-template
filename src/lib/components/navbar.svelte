@@ -23,11 +23,11 @@
     </div>
 
     <div class="flex space-x-3">
-        <button class="bg-white text-green-700 text-sm px-3 py-1 rounded hover:shadow-sm">
+        <a href = "/login" class="bg-white text-green-700 text-sm px-3 py-1 rounded hover:shadow-sm">
             Inloggen
-        </button>
-        <button class="bg-black text-white text-sm px-3 py-1 rounded hover:shadow-sm">
+        </a>
+        <a href="/register" class="bg-black text-white text-sm px-3 py-1 rounded hover:shadow-sm">
             Aanmelden
-        </button>
+        </a>
     </div>
 </nav>
