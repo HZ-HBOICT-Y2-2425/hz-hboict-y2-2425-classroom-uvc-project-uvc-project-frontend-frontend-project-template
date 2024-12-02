@@ -1,7 +1,12 @@
 <script>
-
   import '../app.css';
+  import { user, initializeUserStore } from "$lib/store";
+  import { onMount } from "svelte";
 
+  onMount(() => {
+      initializeUserStore();
+  });
+  
   let categories = [
     {
       title: "Groenten",
@@ -24,6 +29,7 @@
       description: "Lokale en duurzame vleesproducten.",
     },
   ];
+ 
 </script>
 
 <div class="min-h-screen bg-gray-50 flex flex-col space-y-12">
