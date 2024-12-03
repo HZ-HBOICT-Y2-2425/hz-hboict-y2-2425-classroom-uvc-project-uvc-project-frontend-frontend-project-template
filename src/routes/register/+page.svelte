@@ -3,6 +3,10 @@
 
     let data;
 
+    if ($user) {
+        window.location.href = '/';
+    }
+
     async function createAccount() {
         const name = document.getElementById("name").value;
         const email = document.getElementById("email").value;
@@ -22,9 +26,6 @@
 </script>
 
 <div>
-    {#if $user}
-        <h1>Hello {$user.name}!</h1>
-    {/if}
     <h1>Inloggen:</h1>
     <input id="name" placeholder="gebruikersnaam">
     <input id="email" placeholder="email">

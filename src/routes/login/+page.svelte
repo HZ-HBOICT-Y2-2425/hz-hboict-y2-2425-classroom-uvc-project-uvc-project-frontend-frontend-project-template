@@ -1,9 +1,12 @@
 <script>
-    import { onMount } from "svelte";
     import { user } from "$lib/store";
 
     let passwordIncorrect = false;
     let data;
+
+    if ($user) {
+        window.location.href = '/';
+    }
 
     async function login() {
         const name = document.getElementById("name").value;
@@ -14,6 +17,7 @@
                 const res = await fetch(url, {method: "GET"});
                 data = await res.json();
                 user.set(data);
+                window.location.href = '/';
             } catch (err) {
                 passwordIncorrect = true;
             }
@@ -22,10 +26,6 @@
 </script>
 
 <div>
-    <a href="/">trug</a>
-    {#if $user}
-        <h1>Hello {$user.name}!</h1>
-    {/if}
     <h1>Inloggen:</h1>
     <input id="name" placeholder="gebruikersnaam of email">
     <input id="password" placeholder="wachtwoord">
