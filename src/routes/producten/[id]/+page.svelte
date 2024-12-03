@@ -19,48 +19,17 @@
     });
   </script>
   
-  <style>
-    .product-detail {
-      padding: 2rem;
-      max-width: 800px;
-      margin: auto;
-      background-color: #f9f9f9;
-      border: 2px solid #ccc;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      margin-top: 2rem;
-    }
-    .product-detail h1 {
-      color: #64AD6C;
-      margin-bottom: 1rem;
-    }
-    .product-detail img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-    }
-    .product-detail p {
-      margin: 0.5rem 0;
-    }
-    .product-price {
-      color: #2e7d32; /* Green color */
-      font-size: 1.25rem;
-      font-weight: bold;
-    }
-  </style>
-  
   {#if product.id}
-    <div class="product-detail">
-      <h1>{product.title}</h1>
-      <img src="https://via.placeholder.com/800x400" alt="{product.title}" />
-      <p><strong>Description:</strong> {product.description}</p>
-      <p><strong>Price:</strong> <span class="product-price">${product.price.toFixed(2)}</span></p>
-      <p><strong>Amount:</strong> {product.amount} {product.unit}</p>
-      <p><strong>Reserved:</strong> {product.reserved ? 'Yes' : 'No'}</p>
-      <p><strong>Expiration Date:</strong> {product.expirationDate}</p>
+    <div class="product-detail max-w-4xl mx-auto p-8 bg-gray-100 border border-gray-300 rounded-lg shadow-lg mt-8">
+      <h1 class="text-2xl font-bold text-green-700 mb-4">{product.title}</h1>
+      <img src="https://via.placeholder.com/800x400" alt="{product.title}" class="w-full h-auto rounded-lg mb-4" />
+      <p class="mb-2"><strong>Description:</strong> {product.description}</p>
+      <p class="mb-2"><strong>Price:</strong> <span class="text-green-700 font-bold text-xl">${product.price.toFixed(2)}</span></p>
+      <p class="mb-2"><strong>Amount:</strong> {product.amount} {product.unit}</p>
+      <p class="mb-2"><strong>Reserved:</strong> {product.reserved ? 'Yes' : 'No'}</p>
+      <p class="mb-2"><strong>Expiration Date:</strong> {product.expirationDate}</p>
     </div>
   {:else}
-    <p>Product not found.</p>
+    <p class="text-center text-gray-600">Product not found.</p>
   {/if}
   
