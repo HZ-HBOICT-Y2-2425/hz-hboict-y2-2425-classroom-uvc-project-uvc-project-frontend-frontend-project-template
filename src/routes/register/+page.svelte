@@ -1,5 +1,10 @@
 <script>
     import { user } from "$lib/store";
+    import { onMount } from "svelte";
+
+    onMount(() => {
+        console.log("test");
+    })
 
     let data;
 

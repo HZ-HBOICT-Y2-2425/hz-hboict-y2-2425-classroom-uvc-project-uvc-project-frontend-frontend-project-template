@@ -1,4 +1,6 @@
 <script>
+    import { user } from "$lib/store";
+
     let menuItems = [
         { id: 1, name: "Home", href: "/", icon: "fa-home" },
         { id: 2, name: "Producten", href: "/products", icon: "fa-leaf" },
@@ -16,10 +18,21 @@
         <span class="text-white text-sm font-semibold">FoodieFuse</span>
     </div>
     <!-- Profiel-icoon -->
-    <a href="/profile" class="text-white flex flex-col items-center hover:bg-white hover:text-green-700 px-2 py-1 rounded">
-        <i class="fa fa-user text-2xl" aria-hidden="true"></i>
-        <span class="text-xs">Profiel</span>
-    </a>
+     {#if $user}
+        <a href="/profile" class="text-white flex flex-col items-center hover:bg-white hover:text-green-700 px-2 py-1 rounded">
+            <i class="fa fa-user text-2xl" aria-hidden="true"></i>
+            <span class="text-xs">Profiel</span>
+        </a>
+    {:else}
+        <div class="flex space-x-3">
+            <a href = "/login" class="bg-white text-green-700 text-sm px-3 py-1 rounded hover:shadow-sm">
+                Inloggen
+            </a>
+            <a href="/register" class="bg-black text-white text-sm px-3 py-1 rounded hover:shadow-sm">
+                Aanmelden
+            </a>
+        </div>
+     {/if}
 </div>
 
 <!-- Navbar -->
@@ -42,12 +55,19 @@
         {/each}
     </div>
 
-    <div class="flex space-x-3">
-        <a href = "/login" class="bg-white text-green-700 text-sm px-3 py-1 rounded hover:shadow-sm">
-            Inloggen
+    {#if $user}
+        <a href="/profile" class="text-white hidden sm:flex flex-col items-center hover:bg-white hover:text-green-700 px-2 py-1 rounded">
+            <i class="fa fa-user text-2xl" aria-hidden="true"></i>
+            <span class="text-xs">Profiel</span>
         </a>
-        <a href="/register" class="bg-black text-white text-sm px-3 py-1 rounded hover:shadow-sm">
-            Aanmelden
-        </a>
-    </div>
+    {:else}
+        <div class="hidden sm:flex space-x-3">
+            <a href = "/login" class="bg-white text-green-700 text-sm px-3 py-1 rounded hover:shadow-sm">
+                Inloggen
+            </a>
+            <a href="/register" class="bg-black text-white text-sm px-3 py-1 rounded hover:shadow-sm">
+                Aanmelden
+            </a>
+        </div>
+    {/if}
 </nav>
