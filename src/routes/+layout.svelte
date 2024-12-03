@@ -1,6 +1,6 @@
 <script>
     import "../app.css";
-    import Navbar from "$lib/components/navbar.svelte";
+    import Navbar from "$lib/components/navbar/navbar.svelte";
     import { onMount } from "svelte";
     import { user, initializeUserStore } from "$lib/store";
 
