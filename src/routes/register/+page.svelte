@@ -1,12 +1,7 @@
 <script>
-    import { onMount } from "svelte";
-    import { user, initializeUserStore } from "$lib/store";
+    import { user } from "$lib/store";
 
     let data;
-
-    onMount(() => {
-        initializeUserStore();
-    });
 
     async function createAccount() {
         const name = document.getElementById("name").value;

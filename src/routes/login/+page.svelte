@@ -1,13 +1,9 @@
 <script>
     import { onMount } from "svelte";
-    import { user, initializeUserStore } from "$lib/store";
+    import { user } from "$lib/store";
 
     let passwordIncorrect = false;
     let data;
-
-    onMount(() => {
-        initializeUserStore();
-    });
 
     async function login() {
         const name = document.getElementById("name").value;
