@@ -1,6 +1,6 @@
 <script>
     import InputField from "$lib/components/inputField.svelte";
-import { areFieldsFilled, baseInputClasses } from "$lib/formUtils";
+    import { areFieldsFilled } from "$lib/formUtils";
     import { user } from "$lib/store";
 
     let passwordConfirm = true;
@@ -41,15 +41,15 @@ import { areFieldsFilled, baseInputClasses } from "$lib/formUtils";
     <section class="bg-white shadow-md rounded-lg p-8 w-full max-w-sm">
         <h1 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Aanmelden</h1>
         
-        <InputField fieldName="name" fieldValue={fields.name} type="text" placeholder="Gebruikersnaam" />
+        <InputField id="name" fieldValue={fields.name} type="text" placeholder="Gebruikersnaam" />
 
-        <InputField fieldName="email" fieldValue={fields.email} type="text" placeholder="Email" />
+        <InputField id="email" fieldValue={fields.email} type="text" placeholder="Email" />
 
-        <InputField fieldName="zipcode" fieldValue={fields.zipcode} type="text" placeholder="Postcode" />
+        <InputField id="zipcode" fieldValue={fields.zipcode} type="text" placeholder="Postcode" />
 
-        <InputField fieldName="password" fieldValue={fields.password} type="password" placeholder="Wachtwoord" />
-        
-        <InputField fieldName="passwordConfirm" fieldValue={fields.passwordConfirm} type="password" placeholder="Bevestig wachtwoord" />
+        <InputField id="password" fieldValue={fields.password} type="password" placeholder="Wachtwoord" />
+
+        <InputField id="passwordConfirm" fieldValue={fields.passwordConfirm} type="password" placeholder="Bevestig wachtwoord" />
 
         {#if !areFieldsFilled(fields)}
             <p class="text-sm text-red-500 mb-4">Vul alles in</p>

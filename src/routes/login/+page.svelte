@@ -1,6 +1,6 @@
 <script>
     import InputField from "$lib/components/inputField.svelte";
-    import { areFieldsFilled, baseInputClasses } from "$lib/formUtils";
+    import { areFieldsFilled } from "$lib/formUtils";
     import { user } from "$lib/store";
 
     let userFound = true;
@@ -32,9 +32,9 @@
     <section class="bg-white shadow-md rounded-lg p-8 w-full max-w-sm">
         <h1 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Inloggen</h1>
 
-        <InputField fieldName="user" fieldValue={fields.user} type="text" placeholder="Gebruikersnaam of email" />
-        
-        <InputField fieldName="password" fieldValue={fields.password} type="password" placeholder="Wachtwoord" />
+        <InputField id="user" fieldValue={fields.user} type="text" placeholder="Gebruikersnaam of email" />
+
+        <InputField id="password" fieldValue={fields.password} type="password" placeholder="Wachtwoord" />
 
         {#if !areFieldsFilled(fields)}
             <p class="text-sm text-red-500 mb-4">Vul alles in</p>
