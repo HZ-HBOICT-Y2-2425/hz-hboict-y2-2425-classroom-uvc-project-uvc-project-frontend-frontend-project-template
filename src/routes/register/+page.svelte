@@ -1,5 +1,6 @@
 <script>
-    import { areFieldsFilled, baseInputClasses } from "$lib/formUtils";
+    import InputField from "$lib/components/inputField.svelte";
+import { areFieldsFilled, baseInputClasses } from "$lib/formUtils";
     import { user } from "$lib/store";
 
     let passwordConfirm = true;
@@ -40,25 +41,15 @@
     <section class="bg-white shadow-md rounded-lg p-8 w-full max-w-sm">
         <h1 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Aanmelden</h1>
         
-        <input id="name" placeholder="Gebruikersnaam"
-            class="{baseInputClasses} {fields.name === "" ? 'border-red-500' : 'border-gray-300'}"
-        />
+        <InputField fieldName="name" fieldValue={fields.name} type="text" placeholder="Gebruikersnaam" />
+
+        <InputField fieldName="email" fieldValue={fields.email} type="text" placeholder="Email" />
+
+        <InputField fieldName="zipcode" fieldValue={fields.zipcode} type="text" placeholder="Postcode" />
+
+        <InputField fieldName="password" fieldValue={fields.password} type="password" placeholder="Wachtwoord" />
         
-        <input id="email" placeholder="Email"
-            class="{baseInputClasses} {fields.email === "" ? 'border-red-500' : 'border-gray-300'}"
-        />
-        
-        <input id="zipcode" placeholder="Postcode"
-            class="{baseInputClasses} {fields.zipcode === "" ? 'border-red-500' : 'border-gray-300'}"
-        />
-        
-        <input id="password" type="password" placeholder="Wachtwoord"
-            class="{baseInputClasses} {fields.password === "" ? 'border-red-500' : 'border-gray-300'}"
-        />
-        
-        <input id="passwordConfirm" type="password" placeholder="Bevestig wachtwoord"
-            class="{baseInputClasses} {fields.passwordConfirm === "" ? 'border-red-500' : 'border-gray-300'}"
-        />
+        <InputField fieldName="passwordConfirm" fieldValue={fields.passwordConfirm} type="password" placeholder="Bevestig wachtwoord" />
 
         {#if !areFieldsFilled(fields)}
             <p class="text-sm text-red-500 mb-4">Vul alles in</p>
