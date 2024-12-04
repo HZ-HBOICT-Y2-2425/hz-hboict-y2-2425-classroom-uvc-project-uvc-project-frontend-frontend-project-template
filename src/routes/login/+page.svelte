@@ -25,7 +25,6 @@
         }
     }
 
-    
 </script>
 
 <div class="flex flex-row items-center justify-center min-h-screen bg-gray-100">
