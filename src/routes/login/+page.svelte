@@ -3,7 +3,7 @@
 
     const inputClasses = "w-full px-4 py-2 mb-4 text-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none border border-gray-300";
     let userFound = true;
-    let emptyFields = [];
+    let fieldsFilledBool = true;
     let fields = {
         user: "",
         password: ""
@@ -13,25 +13,29 @@
     async function login() {
         fields.user = document.getElementById("user").value;
         fields.password = document.getElementById("password").value;
-        emptyFields = returnEmptyFields(fields);
-        if (emptyFields.length === 0) {
+        fieldsFilledBool = areFieldsFilled(fields);
+        if (fieldsFilledBool) {
             handleGetRequest(`http://localhost:3010/user/login?user=${fields.user}&password=${fields.password}`);
         } else {
-            Object.keys(fields).forEach(field => {
-                let htmlField = document.getElementById(field);
-                if (htmlField.value === "") {
-                    if (htmlField.classList.contains("border-gray-300")) {
-                        htmlField.classList.remove("border-gray-300");
-                        htmlField.classList.add("border-red-500");
-                    }
-                } else {
-                    if (htmlField.classList.contains("border-red-500")) {
-                        htmlField.classList.remove("border-red-500");
-                        htmlField.classList.add("border-gray-300");
-                    }
-                }
-            })
+            toggleBorders(fields)
         }
+    }
+
+    function toggleBorders(object) {
+        Object.keys(object).forEach(field => {
+            let htmlField = document.getElementById(field);
+            if (htmlField.value === "") {
+                if (htmlField.classList.contains("border-gray-300")) {
+                    htmlField.classList.remove("border-gray-300");
+                    htmlField.classList.add("border-red-500");
+                }
+            } else {
+                if (htmlField.classList.contains("border-red-500")) {
+                    htmlField.classList.remove("border-red-500");
+                    htmlField.classList.add("border-gray-300");
+                }
+            }
+        })
     }
 
     async function handleGetRequest(url) {
@@ -45,15 +49,14 @@
         }
     }
 
-    function returnEmptyFields(object) {
-        const check = [];
-        const values = Object.values(object)
-        for (let i = 0; i < values.length; i++) {
-            if (values[i] === "") {
-                check.push(Object.keys(object)[i]);
-            }
+    function areFieldsFilled(object) {
+        const values = Object.values(object);
+        const index = values.findIndex(value => value === "");
+        console.log("index: ", index);
+        if (index === -1) {
+            return true;
         }
-        return check;
+        return false;
     }
 </script>
 
@@ -65,7 +68,7 @@
         
         <input id="password" type="password" placeholder="Wachtwoord" class={inputClasses}/>
 
-        {#if emptyFields.length > 0}
+        {#if !fieldsFilledBool}
             <p class="text-sm text-red-500 mb-4">Vul alles in</p>
         {:else if !userFound}
             <p class="text-sm text-red-500 mb-4">Wachtwoord of gebruikersnaam incorrect</p>
