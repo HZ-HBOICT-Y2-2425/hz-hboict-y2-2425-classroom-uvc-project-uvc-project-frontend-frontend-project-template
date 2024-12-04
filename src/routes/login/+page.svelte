@@ -1,34 +1,47 @@
 <script>
     import { user } from "$lib/store";
 
-    const inputClasses = "w-full px-4 py-2 mb-4 text-gray-700 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none";
+    const inputClasses = "w-full px-4 py-2 mb-4 text-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none border border-gray-300";
     let userFound = true;
     let emptyFields = [];
-    let specificFields = {
+    let fields = {
         user: "",
         password: ""
     }
     let data;
 
-    if ($user) {
-        window.location.href = '/';
+    async function login() {
+        fields.user = document.getElementById("user").value;
+        fields.password = document.getElementById("password").value;
+        emptyFields = returnEmptyFields(fields);
+        if (emptyFields.length === 0) {
+            handleGetRequest(`http://localhost:3010/user/login?user=${fields.user}&password=${fields.password}`);
+        } else {
+            Object.keys(fields).forEach(field => {
+                let htmlField = document.getElementById(field);
+                if (htmlField.value === "") {
+                    if (htmlField.classList.contains("border-gray-300")) {
+                        htmlField.classList.remove("border-gray-300");
+                        htmlField.classList.add("border-red-500");
+                    }
+                } else {
+                    if (htmlField.classList.contains("border-red-500")) {
+                        htmlField.classList.remove("border-red-500");
+                        htmlField.classList.add("border-gray-300");
+                    }
+                }
+            })
+        }
     }
 
-    async function login() {
-        specificFields.user = document.getElementById("user").value;
-        specificFields.password = document.getElementById("password").value;
-        emptyFields = returnEmptyFields(specificFields);
-        if (emptyFields.length === 0) {
-            emptyFields = [];
-            const url = `http://localhost:3010/user/login?user=${specificFields.user}&password=${specificFields.password}`;
-            try {
-                const res = await fetch(url, {method: "GET"});
-                data = await res.json();
-                user.set(data);
-                window.location.href = '/';
-            } catch (err) {
-                userFound = false;
-            }
+    async function handleGetRequest(url) {
+        try {
+            const res = await fetch(url, {method: "GET"});
+            data = await res.json();
+            user.set(data);
+            window.location.href = '/';
+        } catch (err) {
+            userFound = false;
         }
     }
 
@@ -48,18 +61,9 @@
     <section class="bg-white shadow-md rounded-lg p-8 w-full max-w-sm">
         <h1 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Inloggen</h1>
         
-        <input 
-            id="user" 
-            placeholder="Gebruikersnaam of email" 
-            class={inputClasses}
-        />
+        <input id="user" placeholder="Gebruikersnaam of email" class={inputClasses}/>
         
-        <input 
-            id="password" 
-            type="password" 
-            placeholder="Wachtwoord" 
-            class={inputClasses}
-        />
+        <input id="password" type="password" placeholder="Wachtwoord" class={inputClasses}/>
 
         {#if emptyFields.length > 0}
             <p class="text-sm text-red-500 mb-4">Vul alles in</p>

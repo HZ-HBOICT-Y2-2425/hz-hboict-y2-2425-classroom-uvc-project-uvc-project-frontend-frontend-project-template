@@ -31,5 +31,5 @@
     <input id="email" placeholder="email">
     <input id="password" placeholder="wachtwoord">
     <input id="zipcode" placeholder="postcode">
-    <button on:click={createAccount}>create account</button>
+    <button on:click={() => createAccount}>create account</button>
 </div>
