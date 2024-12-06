@@ -26,12 +26,10 @@
             </p>
         </div>
 
-        <!--
-        <a href="/profile/update" 
+        <a href="/profile/edit" 
             class="inline-block mt-6 text-sm bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
             Profiel Bewerken
         </a>
-        -->
         
         <button 
             on:click={() => logOut()} 

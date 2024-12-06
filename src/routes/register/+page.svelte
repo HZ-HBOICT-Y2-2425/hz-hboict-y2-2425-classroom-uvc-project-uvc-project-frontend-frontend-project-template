@@ -41,15 +41,15 @@
     <section class="bg-white shadow-md rounded-lg p-8 w-full max-w-sm">
         <h1 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Aanmelden</h1>
         
-        <InputField id="name" fieldValue={fields.name} type="text" placeholder="Gebruikersnaam" />
+        <InputField id="name" defaultValue="" fieldValue={fields.name} type="text" placeholder="Gebruikersnaam" />
 
-        <InputField id="email" fieldValue={fields.email} type="text" placeholder="Email" />
+        <InputField id="email" defaultValue="" fieldValue={fields.email} type="text" placeholder="Email" />
 
-        <InputField id="zipcode" fieldValue={fields.zipcode} type="text" placeholder="Postcode" />
+        <InputField id="zipcode" defaultValue="" fieldValue={fields.zipcode} type="text" placeholder="Postcode" />
 
-        <InputField id="password" fieldValue={fields.password} type="password" placeholder="Wachtwoord" />
+        <InputField id="password" defaultValue="" fieldValue={fields.password} type="password" placeholder="Wachtwoord" />
 
-        <InputField id="passwordConfirm" fieldValue={fields.passwordConfirm} type="password" placeholder="Bevestig wachtwoord" />
+        <InputField id="passwordConfirm" defaultValue="" fieldValue={fields.passwordConfirm} type="password" placeholder="Bevestig wachtwoord" />
 
         {#if !areFieldsFilled(fields)}
             <p class="text-sm text-red-500 mb-4">Vul alles in</p>
