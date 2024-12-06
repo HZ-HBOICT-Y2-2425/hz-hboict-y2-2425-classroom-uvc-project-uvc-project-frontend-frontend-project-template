@@ -41,15 +41,15 @@
     <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-3xl">
         <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Profiel</h1>
 
-        <InputField id="name" defaultValue={$user.name} fieldValue={fields.name} type="text" placeholder="Gebruikersnaam" />
+        <InputField parameterObject={{id: "name", placeholder: "Gebruikersnaam", defaultValue: $user.name, field: fields.name}} />
 
-        <InputField id="email" defaultValue={$user.email} fieldValue={fields.email} type="text" placeholder="Email" />
+        <InputField parameterObject={{id: "email", placeholder: "Email", defaultValue: $user.email, field: fields.email}} />
 
-        <InputField id="zipcode" defaultValue={$user.zipcode} fieldValue={fields.zipcode} type="text" placeholder="Postcode" />
+        <InputField parameterObject={{id: "zipcode", placeholder: "Postcode", defaultValue: $user.zipcode, field: fields.zipcode}} />
 
-        <InputField id="password" defaultValue={$user.password} fieldValue={fields.password} type="password" placeholder="Wachtwoord" />
+        <InputField parameterObject={{id: "password", type: "password", placeholder: "Wachtwoord", defaultValue: $user.password, field: fields.password}} />
 
-        <InputField id="passwordConfirm" defaultValue={$user.password} fieldValue={fields.passwordConfirm} type="password" placeholder="Bevestig wachtwoord" />
+        <InputField parameterObject={{id: "passwordConfirm", type:"password", placeholder: "Bevestig wachtwoord", defaultValue: $user.password, field: fields.passwordConfirm}} />
 
         {#if !areFieldsFilled(fields)}
             <p class="text-sm text-red-500 mb-4">Vul alles in</p>
