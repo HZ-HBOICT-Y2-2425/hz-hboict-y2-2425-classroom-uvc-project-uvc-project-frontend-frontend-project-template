@@ -1,27 +1,44 @@
 <script>
-    import InputField from "$lib/components/inputField.svelte";
+    import Form from "$lib/components/input/form.svelte";
     import { areFieldsFilled } from "$lib/formUtils";
     import { user } from "$lib/store";
 
     let passwordConfirm = true;
     let fields = {
-        name: null,
-        email: null,
-        zipcode: null,
-        password: null,
-        passwordConfirm: null
+        name: {
+            value: null,
+            placeholder: "Gebruikersnaam"
+        },
+        email: {
+            value: null,
+            placeholder: "Email"
+        },
+        zipcode: {
+            value: null,
+            placeholder: "Postcode"
+        },
+        password: {
+            value: null,
+            placeholder: "Wachtwoord",
+            type: "password"
+        },
+        passwordConfirm: {
+            value: null,
+            placeholder: "Bevestig wachtwoord",
+            type:"password"
+        }
     }
 
     async function createAccount() {
-        fields.name = document.getElementById("name").value;
-        fields.email = document.getElementById("email").value;
-        fields.zipcode = document.getElementById("zipcode").value;
-        fields.password = document.getElementById("password").value;
-        fields.passwordConfirm = document.getElementById("passwordConfirm").value;
-        if (fields.password === fields.passwordConfirm) {
+        fields.name.value = document.getElementById("name").value;
+        fields.email.value = document.getElementById("email").value;
+        fields.zipcode.value = document.getElementById("zipcode").value;
+        fields.password.value = document.getElementById("password").value;
+        fields.passwordConfirm.value = document.getElementById("passwordConfirm").value;
+        if (fields.password.value === fields.passwordConfirm.value) {
             passwordConfirm = true;
             if (areFieldsFilled(fields)) {
-                const url = `http://localhost:3010/user?name=${fields.name}&email=${fields.email}&password=${fields.password}&zipcode=${fields.zipcode}`;
+                const url = `http://localhost:3010/user?name=${fields.name.value}&email=${fields.email.value}&password=${fields.password.value}&zipcode=${fields.zipcode.value}`;
                 try {
                     const res = await fetch(url, {method: "POST"});
                     let data = await res.json();
@@ -41,15 +58,7 @@
     <section class="bg-white shadow-md rounded-lg p-8 w-full max-w-sm">
         <h1 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Aanmelden</h1>
         
-        <InputField parameterObject={{id: "name", placeholder: "Gebruikersnaam", field: fields.name}} />
-
-        <InputField parameterObject={{id: "email", placeholder: "Email", field: fields.email}} />
-
-        <InputField parameterObject={{id: "zipcode", placeholder: "Postcode", field: fields.zipcode}} />
-
-        <InputField parameterObject={{id: "password", type: "password", placeholder: "Wachtwoord", field: fields.password}} />
-
-        <InputField parameterObject={{id: "passwordConfirm", type:"password", placeholder: "Bevestig wachtwoord", field: fields.passwordConfirm}} />
+        <Form fields={fields} />
 
         {#if !areFieldsFilled(fields)}
             <p class="text-sm text-red-500 mb-4">Vul alles in</p>

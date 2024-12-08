@@ -1,19 +1,28 @@
 <script>
-    import InputField from "$lib/components/inputField.svelte";
+    import Form from "$lib/components/input/form.svelte";
     import { areFieldsFilled } from "$lib/formUtils";
     import { user } from "$lib/store";
 
     let userFound = true;
     let fields = {
-        user: null,
-        password: null
+        user: {
+            value: null,
+            placeholder: "Gebruikersnaam"
+        },
+        password: {
+            value: null,
+            placeholder: "Wachtwoord",
+            type: "password"
+        }
     }
 
     async function login() {
-        fields.user = document.getElementById("user").value;
-        fields.password = document.getElementById("password").value;
+        fields.user.value = document.getElementById("user").value;
+        fields.password.value = document.getElementById("password").value;
+        console.log("fields:", fields);
+        
         if (areFieldsFilled(fields)) {
-            let url = `http://localhost:3010/user/login?user=${fields.user}&password=${fields.password}`
+            let url = `http://localhost:3010/user/login?user=${fields.user.value}&password=${fields.password.value}`
             try {
                 userFound = true;
                 const res = await fetch(url, {method: "GET"});
@@ -32,9 +41,7 @@
     <section class="bg-white shadow-md rounded-lg p-8 w-full max-w-sm">
         <h1 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Inloggen</h1>
 
-        <InputField parameterObject={{id: "user", placeholder: "Gebruikersnaam", field: fields.user}} />
-
-        <InputField parameterObject={{id: "password", type: "password", placeholder: "Wachtwoord", field: fields.password}} />
+        <Form fields={fields}/>
 
         {#if !areFieldsFilled(fields)}
             <p class="text-sm text-red-500 mb-4">Vul alles in</p>
