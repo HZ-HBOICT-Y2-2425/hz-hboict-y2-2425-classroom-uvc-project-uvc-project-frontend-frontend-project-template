@@ -1,6 +1,6 @@
 <script>
     import Form from "$lib/components/input/form.svelte";
-    import { areFieldsFilled } from "$lib/formUtils";
+    import { areFieldsFilled, assignUserInputToFields } from "$lib/components/input/formUtils";
     import { user } from "$lib/store";
 
     let passwordConfirm = true;
@@ -30,11 +30,7 @@
     }
 
     async function createAccount() {
-        fields.name.value = document.getElementById("name").value;
-        fields.email.value = document.getElementById("email").value;
-        fields.zipcode.value = document.getElementById("zipcode").value;
-        fields.password.value = document.getElementById("password").value;
-        fields.passwordConfirm.value = document.getElementById("passwordConfirm").value;
+        assignUserInputToFields(fields);
         if (fields.password.value === fields.passwordConfirm.value) {
             passwordConfirm = true;
             if (areFieldsFilled(fields)) {
@@ -57,7 +53,7 @@
 <div class="flex flex-row items-center justify-center min-h-screen bg-gray-100">
     <section class="bg-white shadow-md rounded-lg p-8 w-full max-w-sm">
         <h1 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Aanmelden</h1>
-        
+
         <Form fields={fields} />
 
         {#if !areFieldsFilled(fields)}

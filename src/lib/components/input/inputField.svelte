@@ -6,8 +6,8 @@
 
 <input 
     id={parameterObject.id} 
-    placeholder={parameterObject.placeholder || "placeholder"} 
-    type={parameterObject.type || "text"} 
+    placeholder={parameterObject.placeholder} 
+    type={parameterObject.type} 
     value={parameterObject.value || ""}
     class="{baseInputClasses} {parameterObject.value === "" ? 'border-red-500' : 'border-gray-300'}"
 />

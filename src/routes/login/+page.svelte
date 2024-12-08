@@ -1,6 +1,6 @@
 <script>
     import Form from "$lib/components/input/form.svelte";
-    import { areFieldsFilled } from "$lib/formUtils";
+    import { areFieldsFilled, assignUserInputToFields } from "$lib/components/input/formUtils";
     import { user } from "$lib/store";
 
     let userFound = true;
@@ -17,10 +17,7 @@
     }
 
     async function login() {
-        fields.user.value = document.getElementById("user").value;
-        fields.password.value = document.getElementById("password").value;
-        console.log("fields:", fields);
-        
+        assignUserInputToFields(fields);
         if (areFieldsFilled(fields)) {
             let url = `http://localhost:3010/user/login?user=${fields.user.value}&password=${fields.password.value}`
             try {

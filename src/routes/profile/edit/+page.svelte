@@ -1,6 +1,6 @@
 <script>
     import Form from "$lib/components/input/form.svelte";
-    import { areFieldsFilled } from "$lib/formUtils";
+    import { areFieldsFilled, assignUserInputToFields } from "$lib/components/input/formUtils";
     import { user } from "$lib/store";
 
     let passwordConfirm = true;
@@ -30,11 +30,7 @@
     }
 
     async function editAccount() {
-        fields.name.value = document.getElementById("name").value;
-        fields.email.value = document.getElementById("email").value;
-        fields.zipcode.value = document.getElementById("zipcode").value;
-        fields.password.value = document.getElementById("password").value;
-        fields.passwordConfirm.value = document.getElementById("passwordConfirm").value;
+        assignUserInputToFields(fields);
         if (fields.password.value === fields.passwordConfirm.value) {
             passwordConfirm = true;
             if (areFieldsFilled(fields)) {
