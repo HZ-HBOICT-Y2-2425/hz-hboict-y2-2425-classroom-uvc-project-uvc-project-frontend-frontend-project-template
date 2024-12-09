@@ -1,21 +1,42 @@
 <script>
     import { goto } from '$app/navigation';
+    import { onMount } from 'svelte';
 
     let title = '';
-    let consumables = '';
-    let allergies = '';
+    let consumables = ''; // Opslag voor geselecteerde consumable ID
+    let allergies = [];   // Opslag voor geselecteerde allergie IDs
     let price = '';
     let amount = '';
     let unit = '';
-    // let co2Contribution = '';
     let description = '';
     let expirationDate = '';
 
     const userID = 1; // Dummy userID
     let showPopup = false;
 
+    // Data van server 3015
+    let consumablesList = [];
+    let allergiesList = [];
+
+    // Ophalen van consumables en allergies
+    async function fetchData() {
+        try {
+            const consumablesRes = await fetch('http://localhost:3015/consumables');
+            if (!consumablesRes.ok) throw new Error('Fout bij het ophalen van consumables');
+            consumablesList = await consumablesRes.json();
+
+            const allergiesRes = await fetch('http://localhost:3015/allergies');
+            if (!allergiesRes.ok) throw new Error('Fout bij het ophalen van allergieën');
+            allergiesList = await allergiesRes.json();
+        } catch (error) {
+            console.error('Er is een fout opgetreden:', error);
+        }
+    }
+
+    onMount(fetchData);
+
     async function addProduct() {
-        if (!title || !price || !amount || !unit || !description || !expirationDate) {
+        if (!title || !price || !amount || !unit || !description || !expirationDate || !consumables) {
             alert('Alle velden zijn verplicht!');
             return;
         }
@@ -25,13 +46,12 @@
             const params = new URLSearchParams({
                 userID: userID.toString(),
                 title,
-                consumables,
-                allergies,
+                consumables, // Geselecteerde categorie ID
+                allergies: allergies.join(','), // Geselecteerde allergieën als comma-separated string
                 price: price.toString(),
                 amount: amount.toString(),
                 unit,
                 description,
-                // co2Contribution: co2Contribution.toString(),
                 expirationDate,
             });
 
@@ -62,12 +82,22 @@
             <input bind:value={title} class="border p-2 w-full" type="text" placeholder="Titel" required />
         </div>
         <div>
-            <label class="block mb-1 font-medium">Consumables (IDs, komma-gescheiden):</label>
-            <input bind:value={consumables} class="border p-2 w-full" type="text" placeholder="Bijv. 4,5,6" />
+            <label class="block mb-1 font-medium">Categorie:</label>
+            <select bind:value={consumables} class="border p-2 w-full" required>
+                <option value="" disabled>Selecteer een categorie</option>
+                {#each consumablesList as consumable}
+                    <option value={consumable.id}>{consumable.name}</option>
+                {/each}
+            </select>
         </div>
         <div>
-            <label class="block mb-1 font-medium">Allergieën (komma-gescheiden):</label>
-            <input bind:value={allergies} class="border p-2 w-full" type="text" placeholder="Bijv. gluten,noten" />
+            <label class="block mb-1 font-medium">Allergieën:</label>
+            <select bind:value={allergies} multiple class="border p-2 w-full">
+                {#each allergiesList as allergy}
+                    <option value={allergy.id}>{allergy.name}</option>
+                {/each}
+            </select>
+            <p class="text-sm text-gray-500 mt-1">Houd <strong>CTRL</strong> (Windows) of <strong>CMD</strong> (Mac) ingedrukt om meerdere te selecteren.</p>
         </div>
         <div>
             <label class="block mb-1 font-medium">Prijs (€):</label>
@@ -81,10 +111,6 @@
             <label class="block mb-1 font-medium">Eenheid (bijv. kg, stuks):</label>
             <input bind:value={unit} class="border p-2 w-full" type="text" placeholder="Eenheid" required />
         </div>
-        <!-- <div>
-            <label class="block mb-1 font-medium">CO2-bijdrage (kg):</label>
-            <input bind:value={co2Contribution} class="border p-2 w-full" type="number" step="0.001" placeholder="CO2-bijdrage" required />
-        </div> -->
         <div>
             <label class="block mb-1 font-medium">Beschrijving:</label>
             <textarea bind:value={description} class="border p-2 w-full" placeholder="Beschrijving" required></textarea>
