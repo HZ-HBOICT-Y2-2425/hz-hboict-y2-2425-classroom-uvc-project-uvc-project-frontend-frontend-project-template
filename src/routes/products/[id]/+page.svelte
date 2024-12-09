@@ -1,22 +1,21 @@
 <script>
   import { onMount } from 'svelte';
-  import { page } from '$app/stores'; // To access route parameters
+  import { page } from '$app/stores';
 
   let product = {};
   let isLoading = true;
   let error = null;
 
   onMount(async () => {
-    const productId = $page.params.id; // Haal het product ID uit de route parameters
+    const productId = $page.params.id;
     try {
-      // Haal het specifieke product op via de API
       const response = await fetch(`http://localhost:3010/products/product/${productId}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch product');
+        throw new Error('Gefaald om product te laden');
       }
       product = await response.json();
     } catch (err) {
-      console.error('Error fetching product:', err);
+      console.error('Error bij het laden van producten:', err);
       error = 'Product kon niet worden geladen. Probeer het later opnieuw.';
     } finally {
       isLoading = false;

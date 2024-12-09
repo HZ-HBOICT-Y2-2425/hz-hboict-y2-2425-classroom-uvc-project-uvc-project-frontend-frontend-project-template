@@ -7,20 +7,20 @@
 
   onMount(async () => {
     try {
-      // Fetch the list of product URLs
+      // Laad de URLs van alle producten
       const response = await fetch('http://localhost:3010/products');
       if (!response.ok) {
-        throw new Error('Failed to fetch product URLs');
+        throw new Error('Gefaald om product URLs te laden');
       }
 
       const productUrls = await response.json();
 
-      // Fetch details for each product
+      // Laat de product details van alle producten
       const productDetails = await Promise.all(
         productUrls.map(async (url) => {
           const productResponse = await fetch(`http://localhost:3010/${url}`);
           if (!productResponse.ok) {
-            throw new Error(`Failed to fetch product details from ${url}`);
+            throw new Error(`Gefaald om producten te laden van: ${url}`);
           }
           return await productResponse.json();
         })
@@ -28,7 +28,7 @@
 
       products = productDetails;
     } catch (err) {
-      console.error('Error fetching products:', err);
+      console.error('Error bij het laden van producten:', err);
       error = 'Producten konden niet worden geladen. Probeer het later opnieuw.';
     } finally {
       isLoading = false;
