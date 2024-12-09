@@ -1,16 +1,32 @@
 <script>
   import { onMount } from 'svelte';
+
   let products = [];
   let isLoading = true;
   let error = null;
 
   onMount(async () => {
     try {
-      const response = await fetch('http://localhost:3013/');
+      // Fetch the list of product URLs
+      const response = await fetch('http://localhost:3010/products');
       if (!response.ok) {
-        throw new Error('Failed to fetch products');
+        throw new Error('Failed to fetch product URLs');
       }
-      products = await response.json();
+
+      const productUrls = await response.json();
+
+      // Fetch details for each product
+      const productDetails = await Promise.all(
+        productUrls.map(async (url) => {
+          const productResponse = await fetch(`http://localhost:3010/${url}`);
+          if (!productResponse.ok) {
+            throw new Error(`Failed to fetch product details from ${url}`);
+          }
+          return await productResponse.json();
+        })
+      );
+
+      products = productDetails;
     } catch (err) {
       console.error('Error fetching products:', err);
       error = 'Producten konden niet worden geladen. Probeer het later opnieuw.';
@@ -21,7 +37,7 @@
 </script>
 
 {#if isLoading}
-  <p class="text-center text-gray-600 mt-8">Producten worden geladen...</p>
+  <p class="text-center text-gray-600">Producten worden geladen...</p>
 {:else if error}
   <p class="text-center text-red-600">{error}</p>
 {:else if products.length > 0}

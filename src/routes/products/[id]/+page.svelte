@@ -10,7 +10,7 @@
     const productId = $page.params.id; // Haal het product ID uit de route parameters
     try {
       // Haal het specifieke product op via de API
-      const response = await fetch(`http://localhost:3013/product/${productId}`);
+      const response = await fetch(`http://localhost:3010/products/product/${productId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch product');
       }
