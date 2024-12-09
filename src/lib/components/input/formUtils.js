@@ -1,3 +1,4 @@
+import { goto } from "$app/navigation";
 import { user } from "$lib/store";
 
 export function areFieldsFilled(fields) {
@@ -15,13 +16,13 @@ export function assignUserInputToFields(fields) {
     return newFields;
 }
 
-export async function communicateWithApi(url, callMethod, redirect) {
+export async function communicateWithApi(url, callMethod, redirect = '/') {
     let succesful = true;
     try {
         const res = await fetch(url, {method: callMethod});
         let data = await res.json();
         user.set(data);
-        window.location.href = redirect;
+        goto(redirect);
     } catch (err) {
         succesful = false;
     }

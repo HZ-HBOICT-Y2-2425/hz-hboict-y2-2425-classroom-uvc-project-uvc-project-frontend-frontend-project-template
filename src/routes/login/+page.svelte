@@ -20,9 +20,9 @@
         fields = assignUserInputToFields(fields);
         fieldsFilled = areFieldsFilled(fields);
         if (fieldsFilled) {
-            let url = `http://localhost:3010/user/login?user=${fields.user.value}&password=${fields.password.value}`
+            const url = `http://localhost:3010/user/login?user=${fields.user.value}&password=${fields.password.value}`
             userFound = true;
-            userFound = await communicateWithApi(url, 'GET', '/');
+            userFound = await communicateWithApi(url, 'GET');
         }
     }
 

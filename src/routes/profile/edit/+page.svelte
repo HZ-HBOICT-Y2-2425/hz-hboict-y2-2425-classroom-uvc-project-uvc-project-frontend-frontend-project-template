@@ -1,4 +1,5 @@
 <script>
+    import { goto } from "$app/navigation";
     import Form from "$lib/components/input/form.svelte";
     import { areFieldsFilled, assignUserInputToFields, communicateWithApi } from "$lib/components/input/formUtils";
     import { user } from "$lib/store";

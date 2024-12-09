@@ -1,9 +1,10 @@
 <script>
+    import { goto } from "$app/navigation";
     import { user } from "$lib/store";
 
     function logOut() {
         user.set(null);
-        window.location.href = '/';
+        goto('/');
     }
 </script>
 
