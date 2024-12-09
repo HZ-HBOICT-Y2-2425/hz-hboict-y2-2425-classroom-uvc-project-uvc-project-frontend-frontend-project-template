@@ -6,14 +6,14 @@
 
   onMount(async () => {
     try {
-      const response = await fetch('http://localhost:3013/products');
+      const response = await fetch('http://localhost:3013/');
       if (!response.ok) {
         throw new Error('Failed to fetch products');
       }
       products = await response.json();
     } catch (err) {
       console.error('Error fetching products:', err);
-      error = 'Could not load products. Please try again later.';
+      error = 'Producten konden niet worden geladen. Probeer het later opnieuw.';
     } finally {
       isLoading = false;
     }
@@ -21,7 +21,7 @@
 </script>
 
 {#if isLoading}
-  <p class="text-center text-gray-600">Loading products...</p>
+  <p class="text-center text-gray-600 mt-8">Producten worden geladen...</p>
 {:else if error}
   <p class="text-center text-red-600">{error}</p>
 {:else if products.length > 0}
@@ -29,7 +29,7 @@
     {#each products as product (product.id)}
       <div
         class="border-2 border-gray-300 rounded-lg overflow-hidden bg-gray-100 transition-transform transform hover:translate-y-[-5px] hover:shadow-lg cursor-pointer"
-        on:click={() => window.location.href = `/producten/${product.id}`}
+        on:click={() => window.location.href = `/products/${product.id}`}
       >
         <img
           src="https://via.placeholder.com/400x200"
@@ -45,5 +45,5 @@
     {/each}
   </div>
 {:else}
-  <p class="text-center text-gray-600">No products available.</p>
+  <p class="text-center text-gray-600">Geen producten gevonden...</p>
 {/if}
