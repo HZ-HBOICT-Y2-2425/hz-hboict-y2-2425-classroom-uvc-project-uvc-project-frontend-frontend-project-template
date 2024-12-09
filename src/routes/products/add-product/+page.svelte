@@ -7,7 +7,7 @@
     let price = '';
     let amount = '';
     let unit = '';
-    let co2Contribution = '';
+    // let co2Contribution = '';
     let description = '';
     let expirationDate = '';
 
@@ -15,7 +15,7 @@
     let showPopup = false;
 
     async function addProduct() {
-        if (!title || !price || !amount || !unit || !co2Contribution || !description || !expirationDate) {
+        if (!title || !price || !amount || !unit || !description || !expirationDate) {
             alert('Alle velden zijn verplicht!');
             return;
         }
@@ -31,7 +31,7 @@
                 amount: amount.toString(),
                 unit,
                 description,
-                co2Contribution: co2Contribution.toString(),
+                // co2Contribution: co2Contribution.toString(),
                 expirationDate,
             });
 
@@ -43,7 +43,7 @@
             if (res.ok) {
                 showPopup = true; // Toon pop-up melding
                 setTimeout(() => {
-                    goto('/producten'); // Navigeer terug naar de productenpagina
+                    goto('/products'); // Navigeer terug naar de productenpagina
                 }, 2000);
             } else {
                 alert('Fout bij het toevoegen van het product.');
@@ -81,10 +81,10 @@
             <label class="block mb-1 font-medium">Eenheid (bijv. kg, stuks):</label>
             <input bind:value={unit} class="border p-2 w-full" type="text" placeholder="Eenheid" required />
         </div>
-        <div>
+        <!-- <div>
             <label class="block mb-1 font-medium">CO2-bijdrage (kg):</label>
             <input bind:value={co2Contribution} class="border p-2 w-full" type="number" step="0.001" placeholder="CO2-bijdrage" required />
-        </div>
+        </div> -->
         <div>
             <label class="block mb-1 font-medium">Beschrijving:</label>
             <textarea bind:value={description} class="border p-2 w-full" placeholder="Beschrijving" required></textarea>
