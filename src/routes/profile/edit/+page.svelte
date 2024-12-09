@@ -1,8 +1,9 @@
 <script>
     import Form from "$lib/components/input/form.svelte";
-    import { areFieldsFilled, assignUserInputToFields } from "$lib/components/input/formUtils";
-    import { user } from "$lib/store";
+    import { areFieldsFilled, communicateWithApi } from "$lib/components/input/formUtils";
+    import { inputBorderCheck, user } from "$lib/store";
 
+    let fieldsFilled = null;
     let passwordConfirm = true;
     let fields = {
         name: {
@@ -30,19 +31,19 @@
     }
 
     async function editAccount() {
-        assignUserInputToFields(fields);
+        Object.keys(fields).forEach(key => {
+            fields[key].value = document.getElementById(key).value;
+        });
         if (fields.password.value === fields.passwordConfirm.value) {
             passwordConfirm = true;
-            if (areFieldsFilled(fields)) {
+            fieldsFilled = areFieldsFilled(fields)
+            if (fieldsFilled) {
                 const url = `http://localhost:3010/user/${$user.id}?name=${fields.name.value}&email=${fields.email.value}&password=${fields.password.value}&zipcode=${fields.zipcode.value}`;
-                try {
-                    const res = await fetch(url, {method: "PUT"});
-                    let data = await res.json();
-                    user.set(data);
-                    window.location.href = '/profile';
-                } catch (err) {
-                    throw new Error(err);
-                }
+                await communicateWithApi(url, 'PUT', '/profile');
+            } else {
+                inputBorderCheck.set({
+                    name: fields.name.value === ""
+                })
             }
         } else {
             passwordConfirm = false;
@@ -56,7 +57,7 @@
 
         <Form fields={fields} />
 
-        {#if !areFieldsFilled(fields)}
+        {#if fieldsFilled === false}
             <p class="text-sm text-red-500 mb-4">Vul alles in</p>
         {:else if !passwordConfirm}
             <p class="text-sm text-red-500 mb-4">Vul hetzelfde wachtwoord 2x in</p>

@@ -1,8 +1,8 @@
 <script>
     import Form from "$lib/components/input/form.svelte";
-    import { areFieldsFilled, assignUserInputToFields } from "$lib/components/input/formUtils";
-    import { user } from "$lib/store";
+    import { areFieldsFilled, assignUserInputToFields, communicateWithApi } from "$lib/components/input/formUtils";
 
+    let fieldsFilled = null;
     let userFound = true;
     let fields = {
         user: {
@@ -17,18 +17,14 @@
     }
 
     async function login() {
-        assignUserInputToFields(fields);
-        if (areFieldsFilled(fields)) {
+        Object.keys(fields).forEach(key => {
+            fields[key].value = document.getElementById(key).value;
+        });
+        fieldsFilled = areFieldsFilled(fields);
+        if (fieldsFilled) {
             let url = `http://localhost:3010/user/login?user=${fields.user.value}&password=${fields.password.value}`
-            try {
-                userFound = true;
-                const res = await fetch(url, {method: "GET"});
-                let data = await res.json();
-                user.set(data);
-                window.location.href = '/';
-            } catch (err) {
-                userFound = false;
-            }
+            userFound = true;
+            userFound = await communicateWithApi(url, 'GET', '/');
         }
     }
 
@@ -40,7 +36,7 @@
 
         <Form fields={fields}/>
 
-        {#if !areFieldsFilled(fields)}
+        {#if fieldsFilled === false}
             <p class="text-sm text-red-500 mb-4">Vul alles in</p>
         {:else if !userFound}
             <p class="text-sm text-red-500 mb-4">Wachtwoord of gebruikersnaam incorrect</p>

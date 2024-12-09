@@ -11,6 +11,7 @@
         id: key,
         placeholder: fields[key].placeholder || 'placeholder',
         type: fields[key].type || 'text',
-        value: fields[key].value
+        value: fields[key].value,
+        borderCheck: fields[key].value === ""
     }}/>
 {/each}
