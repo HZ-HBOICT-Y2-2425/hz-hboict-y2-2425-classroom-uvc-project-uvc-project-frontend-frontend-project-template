@@ -7,12 +7,12 @@ export function areFieldsFilled(fields) {
     return check;
 }
 
-// doesn't work cuz of svelte reactivity (idk either)
 export function assignUserInputToFields(fields) {
-    const keys = Object.keys(fields);
-    keys.forEach(key => {
-        fields[key].value = document.getElementById(key).value;
+    let newFields = fields;
+    Object.keys(newFields).forEach(key => {
+        newFields[key].value = document.getElementById(key).value;
     });
+    return newFields;
 }
 
 export async function communicateWithApi(url, callMethod, redirect) {

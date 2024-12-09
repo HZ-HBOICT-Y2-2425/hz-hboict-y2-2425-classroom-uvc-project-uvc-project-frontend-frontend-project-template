@@ -17,9 +17,7 @@
     }
 
     async function login() {
-        Object.keys(fields).forEach(key => {
-            fields[key].value = document.getElementById(key).value;
-        });
+        fields = assignUserInputToFields(fields);
         fieldsFilled = areFieldsFilled(fields);
         if (fieldsFilled) {
             let url = `http://localhost:3010/user/login?user=${fields.user.value}&password=${fields.password.value}`

@@ -1,6 +1,6 @@
 <script>
     import Form from "$lib/components/input/form.svelte";
-    import { areFieldsFilled, communicateWithApi } from "$lib/components/input/formUtils";
+    import { areFieldsFilled, assignUserInputToFields, communicateWithApi } from "$lib/components/input/formUtils";
 
     let fieldsFilled = null;
     let passwordConfirm = true;
@@ -30,9 +30,7 @@
     }
 
     async function createAccount() {
-        Object.keys(fields).forEach(key => {
-            fields[key].value = document.getElementById(key).value;
-        });
+        fields = assignUserInputToFields(fields);
         if (fields.password.value === fields.passwordConfirm.value) {
             passwordConfirm = true;
             fieldsFilled = areFieldsFilled(fields)

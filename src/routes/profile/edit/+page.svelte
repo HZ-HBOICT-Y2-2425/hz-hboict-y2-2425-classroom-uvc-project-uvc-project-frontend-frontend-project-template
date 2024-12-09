@@ -1,7 +1,7 @@
 <script>
     import Form from "$lib/components/input/form.svelte";
-    import { areFieldsFilled, communicateWithApi } from "$lib/components/input/formUtils";
-    import { inputBorderCheck, user } from "$lib/store";
+    import { areFieldsFilled, assignUserInputToFields, communicateWithApi } from "$lib/components/input/formUtils";
+    import { user } from "$lib/store";
 
     let fieldsFilled = null;
     let passwordConfirm = true;
@@ -31,19 +31,13 @@
     }
 
     async function editAccount() {
-        Object.keys(fields).forEach(key => {
-            fields[key].value = document.getElementById(key).value;
-        });
+        fields = assignUserInputToFields(fields);
         if (fields.password.value === fields.passwordConfirm.value) {
             passwordConfirm = true;
             fieldsFilled = areFieldsFilled(fields)
             if (fieldsFilled) {
                 const url = `http://localhost:3010/user/${$user.id}?name=${fields.name.value}&email=${fields.email.value}&password=${fields.password.value}&zipcode=${fields.zipcode.value}`;
                 await communicateWithApi(url, 'PUT', '/profile');
-            } else {
-                inputBorderCheck.set({
-                    name: fields.name.value === ""
-                })
             }
         } else {
             passwordConfirm = false;
