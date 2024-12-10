@@ -1,25 +1,25 @@
 <script>
-    import { user } from '$lib/store';
+    import { user } from '$lib/store'; // Importeer de user store
     import { onMount } from 'svelte';
+    import { goto } from '$app/navigation'; // Voor navigatie
 
     let title = '';
-    let consumables = ''; // Opslag voor geselecteerde consumable ID
-    let selectedAllergies = []; // Opslag voor geselecteerde allergieën (IDs)
+    let consumables = '';
+    let selectedAllergies = [];
     let price = '';
     let amount = '';
     let unit = '';
     let description = '';
     let expirationDate = '';
-
-    const userID = $user ? $user.id : 1; // Dummy userID
-    let showPopup = false;
-
-    // Data van server 3015
     let consumablesList = [];
     let allergiesList = [];
-    let showDropdown = false; // Voor het togglen van de allergieën dropdown
+    let showDropdown = false;
+    let showPopup = false;
 
-    // Ophalen van consumables en allergies
+    // Reactive waarde van userID
+    $: userID = $user?.id || 1; // Dummy userID als fallback
+
+    // Ophalen van consumables en allergieën
     async function fetchData() {
         try {
             const consumablesRes = await fetch('http://localhost:3015/consumables');
@@ -47,8 +47,8 @@
             const params = new URLSearchParams({
                 userID: userID.toString(),
                 title,
-                consumables, // Geselecteerde categorie ID
-                allergies: selectedAllergies.join(','), // Geselecteerde allergieën als comma-separated string
+                consumables,
+                allergies: selectedAllergies.join(','),
                 price: price.toString(),
                 amount: amount.toString(),
                 unit,
@@ -62,7 +62,7 @@
             const res = await fetch(url, { method: 'POST' });
 
             if (res.ok) {
-                showPopup = true; // Toon pop-up melding
+                showPopup = true;
                 setTimeout(() => {
                     goto('/products'); // Navigeer terug naar de productenpagina
                 }, 2000);
