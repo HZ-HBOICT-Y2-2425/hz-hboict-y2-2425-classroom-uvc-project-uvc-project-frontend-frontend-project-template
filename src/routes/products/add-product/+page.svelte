@@ -1,22 +1,23 @@
 <script>
-    import { goto } from '$app/navigation';
+    import { user } from '$lib/store';
     import { onMount } from 'svelte';
 
     let title = '';
     let consumables = ''; // Opslag voor geselecteerde consumable ID
-    let allergies = [];   // Opslag voor geselecteerde allergie IDs
+    let selectedAllergies = []; // Opslag voor geselecteerde allergieën (IDs)
     let price = '';
     let amount = '';
     let unit = '';
     let description = '';
     let expirationDate = '';
 
-    const userID = 1; // Dummy userID
+    const userID = $user ? $user.id : 1; // Dummy userID
     let showPopup = false;
 
     // Data van server 3015
     let consumablesList = [];
     let allergiesList = [];
+    let showDropdown = false; // Voor het togglen van de allergieën dropdown
 
     // Ophalen van consumables en allergies
     async function fetchData() {
@@ -47,7 +48,7 @@
                 userID: userID.toString(),
                 title,
                 consumables, // Geselecteerde categorie ID
-                allergies: allergies.join(','), // Geselecteerde allergieën als comma-separated string
+                allergies: selectedAllergies.join(','), // Geselecteerde allergieën als comma-separated string
                 price: price.toString(),
                 amount: amount.toString(),
                 unit,
@@ -72,6 +73,15 @@
             console.error('Er is een fout opgetreden:', error);
         }
     }
+
+    // Toggle een allergie aan/uit
+    function toggleAllergy(id) {
+        if (selectedAllergies.includes(id)) {
+            selectedAllergies = selectedAllergies.filter(allergy => allergy !== id);
+        } else {
+            selectedAllergies = [...selectedAllergies, id];
+        }
+    }
 </script>
 
 <div class="container mx-auto p-4">
@@ -91,13 +101,26 @@
             </select>
         </div>
         <div>
-            <label class="block mb-1 font-medium">Allergieën:</label>
-            <select bind:value={allergies} multiple class="border p-2 w-full">
-                {#each allergiesList as allergy}
-                    <option value={allergy.id}>{allergy.name}</option>
-                {/each}
-            </select>
-            <p class="text-sm text-gray-500 mt-1">Houd <strong>CTRL</strong> (Windows) of <strong>CMD</strong> (Mac) ingedrukt om meerdere te selecteren.</p>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Allergieën</label>
+            <div class="relative">
+                <button type="button" on:click={() => (showDropdown = !showDropdown)} class="w-full bg-gray-50 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3 text-left">
+                    {#if selectedAllergies.length > 0}
+                        {selectedAllergies.length} geselecteerd
+                    {:else}
+                        Selecteer allergieën
+                    {/if}
+                </button>
+                {#if showDropdown}
+                    <div class="absolute z-10 bg-white border rounded-md shadow-lg mt-2 w-full max-h-60 overflow-y-auto">
+                        {#each allergiesList as allergy}
+                            <label class="flex items-center px-4 py-2 hover:bg-gray-100">
+                                <input type="checkbox" class="mr-2" checked={selectedAllergies.includes(allergy.id)} on:change={() => toggleAllergy(allergy.id)} />
+                                {allergy.name}
+                            </label>
+                        {/each}
+                    </div>
+                {/if}
+            </div>
         </div>
         <div>
             <label class="block mb-1 font-medium">Prijs (€):</label>
@@ -135,7 +158,7 @@
 .container {
     max-width: 600px;
 }
-.fixed {
-    position: fixed;
+.relative {
+    position: relative;
 }
 </style>
