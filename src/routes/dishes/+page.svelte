@@ -123,7 +123,7 @@
   {:else}
     {#each recipes as recipe}
       <a
-        href={`/recepten/${recipe.id}`}
+        href={`/dishes/${recipe.id}`}
         class="btn px-4 py-2 border-2 border-black bg-green-500 rounded min-w-[8vw] text-center text-white"
       >
         {recipe.name}
