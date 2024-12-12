@@ -122,11 +122,11 @@
         </div>
         <div>
             <label class="block mb-1 font-medium">Prijs (€):</label>
-            <input bind:value={price} class="border p-2 w-full" type="number" step="0.01" placeholder="Prijs" required />
+            <input bind:value={price} class="border p-2 w-full" type="number" step="0.01" placeholder="Prijs" required min="0" />
         </div>
         <div>
             <label class="block mb-1 font-medium">Hoeveelheid:</label>
-            <input bind:value={amount} class="border p-2 w-full" type="number" placeholder="Hoeveelheid" required />
+            <input bind:value={amount} class="border p-2 w-full" type="number" placeholder="Hoeveelheid" required min="0" />
         </div>
         <div>
             <label class="block mb-1 font-medium">Eenheid:</label>
