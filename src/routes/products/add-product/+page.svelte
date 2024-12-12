@@ -10,7 +10,6 @@
     let amount = '';
     let unit = '';
     let description = '';
-    let expirationDate = '';
     let consumablesList = [];
     let allergiesList = [];
     let showDropdown = false;
@@ -37,7 +36,7 @@
     onMount(fetchData);
 
     async function addProduct() {
-        if (!title || !price || !amount || !unit || !description || !expirationDate || !consumables) {
+        if (!title || !price || !amount || !unit || !description ||  !consumables) {
             alert('Alle velden zijn verplicht!');
             return;
         }
@@ -53,7 +52,6 @@
                 amount: amount.toString(),
                 unit,
                 description,
-                expirationDate,
             });
 
             const url = `http://localhost:3013/create?${params.toString()}`;
@@ -131,16 +129,19 @@
             <input bind:value={amount} class="border p-2 w-full" type="number" placeholder="Hoeveelheid" required />
         </div>
         <div>
-            <label class="block mb-1 font-medium">Eenheid (bijv. kg, stuks):</label>
-            <input bind:value={unit} class="border p-2 w-full" type="text" placeholder="Eenheid" required />
+            <label class="block mb-1 font-medium">Eenheid:</label>
+            <select bind:value={unit} class="border p-2 w-full" required>
+                <option value="" disabled>Selecteer een eenheid</option>
+                <option value="kg">Kilogram (kg)</option>
+                <option value="g">Gram (g)</option>
+                <option value="l">Liter (l)</option>
+                <option value="ml">Milliliter (ml)</option>
+                <option value="pcs">Stuks (pcs)</option>
+            </select>
         </div>
         <div>
             <label class="block mb-1 font-medium">Beschrijving:</label>
             <textarea bind:value={description} class="border p-2 w-full" placeholder="Beschrijving" required></textarea>
-        </div>
-        <div>
-            <label class="block mb-1 font-medium">Vervaldatum:</label>
-            <input bind:value={expirationDate} class="border p-2 w-full" type="date" required />
         </div>
         <button class="bg-blue-500 text-white p-2 rounded mt-4">Toevoegen</button>
     </form>
