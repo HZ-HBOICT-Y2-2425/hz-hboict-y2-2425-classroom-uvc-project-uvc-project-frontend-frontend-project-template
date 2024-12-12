@@ -9,6 +9,7 @@
   let recipe;
   let people = 1;
   let selectedIngredients = [];
+  let userId = 1; // Gebruik de huidige ingelogde gebruiker (hardcoded voorbeeld)
 
   // Haal receptdata op via de API
   onMount(async () => {
@@ -27,38 +28,45 @@
   });
 
   // Voeg geselecteerde ingrediënten toe aan de winkelwagen
-  const addToCart = () => {
+  const addToCart = async () => {
     if (selectedIngredients.length === 0) {
       alert('Selecteer eerst ingrediënten!');
       return;
     }
 
-    // Maak de items voor de winkelwagen
-    const itemsToAdd = selectedIngredients.map(ingredient => ({
-      id: ingredient.id,
-      name: `${ingredient.amount} ${ingredient.unit} ${ingredient.name}`,
-      quantity: people // Aantal van het ingrediënt op basis van de geselecteerde personen
-    }));
+    try {
+      // Verstuur elk geselecteerd ingrediënt afzonderlijk naar de backend
+      for (const ingredient of selectedIngredients) {
+        const itemToAdd = {
+          name: ingredient.name,
+          amount: ingredient.amount * people, // Pas het aantal aan op basis van de personen
+          unit: ingredient.unit
+        };
 
-    // Voeg de items toe aan de winkelwagen store
-    cart.update(currentCart => {
-      // We controleren of het item al bestaat in de winkelwagen
-      const existingItemIndex = currentCart.findIndex(item => item.id === itemsToAdd[0].id);
-      if (existingItemIndex !== -1) {
-        // Als het item al bestaat, verhoog de hoeveelheid
-        currentCart[existingItemIndex].quantity += people;
-      } else {
-        // Als het item nog niet bestaat, voeg het toe
-        currentCart.push(...itemsToAdd);
+        const response = await fetch(`http://localhost:3012/${userId}/cart`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(itemToAdd), // Verstuur één item
+        });
+
+        if (!response.ok) {
+          throw new Error('Fout bij het toevoegen van ingrediënten aan de winkelwagen');
+        }
+
+        // Bij succes, werk de winkelwagen store bij
+        const updatedCart = await response.json();
+        cart.set(updatedCart);
+        saveCart(); // Sla de winkelwagen op in localStorage
       }
-      saveCart(); // Winkelwagen opslaan in localStorage
-      return currentCart;
-    });
 
-    alert('Ingrediënten toegevoegd aan de winkelwagen!');
-
-    // Reset de geselecteerde ingrediënten na toevoegen
-    selectedIngredients = [];
+      alert('Ingrediënten toegevoegd aan de winkelwagen!');
+      selectedIngredients = []; // Reset de selectie
+    } catch (error) {
+      console.error(error);
+      alert('Er is een fout opgetreden bij het toevoegen van ingrediënten aan de winkelwagen.');
+    }
   };
 
   // Beperk de minimumwaarde van mensen tot 1
@@ -91,7 +99,7 @@
           bind:group={selectedIngredients} 
           value={ingredient} 
           class="form-checkbox" />
-        <span>{ingredient.amount} {ingredient.unit} {ingredient.name}</span>
+        <span>{ingredient.amount * people} {ingredient.unit} {ingredient.name}</span>
       </label>
     {/each}
   </ul>
