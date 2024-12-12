@@ -14,6 +14,14 @@
   let recipe;
   let people = 1;
   let selectedIngredients = [];
+  let steps = [];
+
+  $: scaledIngredients = recipe?.ingredients
+    ? recipe.ingredients.map((ingredient) => ({
+        ...ingredient,
+        scaledAmount: (ingredient.amount * people).toFixed(1),
+      }))
+    : [];
 
   // Haal receptdata op via de API
   onMount(async () => {
@@ -21,11 +29,16 @@
       const response = await fetch(`http://localhost:3010/recipes/${dish}`);
       if (response.ok) {
         recipe = await response.json();
+
+        // Populate steps after recipe is fetched
+        if (recipe.description) {
+          steps = recipe.description.split(/(?=\d+\.\s)/); // Split into steps
+        }
       } else {
-        throw new Error("Recept niet gevonden");
+        console.error("Failed to fetch recipe:", response.statusText);
       }
     } catch (error) {
-      console.error("Er is een fout opgetreden:", error);
+      console.error("Error fetching recipe:", error);
     }
 
     loadCart(); // Laad de winkelwagen bij het laden van de pagina
@@ -72,11 +85,13 @@
   const changePeople = (delta) => {
     people = Math.max(1, people + delta);
   };
+
+  console.log("Steps:", steps);
 </script>
 
 {#if recipe}
   <img
-    class="block mx-auto"
+    class="block mx-auto max-h-[400px] w-auto rounded-lg shadow-md"
     src={recipe.image_url || "https://via.placeholder.com/800x400"}
     alt="Recept afbeelding"
   />
@@ -104,7 +119,7 @@
     >
       <h3 class="text-xl font-bold ml-2">Ingrediënten:</h3>
       <ul>
-        {#each recipe.ingredients as ingredient}
+        {#each scaledIngredients as ingredient}
           <label class="flex items-center space-x-2 ml-2">
             <input
               type="checkbox"
@@ -112,7 +127,11 @@
               value={ingredient}
               class="form-checkbox"
             />
-            <span>{ingredient.amount} {ingredient.unit} {ingredient.name}</span>
+            <span
+              >{ingredient.scaledAmount}
+              {ingredient.unit}
+              {ingredient.name}</span
+            >
           </label>
         {/each}
       </ul>
@@ -128,9 +147,11 @@
     <!-- Description Section -->
     <div class="w-1/2 ml-10">
       <h2 class="text-2xl font-bold">Instructies</h2>
-      <p class="border-2 border-solid rounded border-black p-2">
-        {recipe.description}
-      </p>
+      <div class="border-2 border-solid rounded border-black p-2">
+        {#each steps as step}
+          <p>{step}</p>
+        {/each}
+      </div>
     </div>
   </div>
 {:else}
