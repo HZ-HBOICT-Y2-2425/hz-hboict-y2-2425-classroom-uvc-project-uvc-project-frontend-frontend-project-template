@@ -43,7 +43,7 @@
 <div class="container mx-auto p-4">
   <div class="flex justify-between items-center mb-4">
     <!-- Groene titel -->
-    <h1 class="text-2xl font-bold" style="color: rgb(100, 173, 108);">
+    <h1 class="text-2xl font-bold text-green-600">
       Producten
     </h1>
 
@@ -62,7 +62,7 @@
   {:else if error}
     <p class="text-center text-red-600">{error}</p>
   {:else if products.length > 0}
-    <div class="grid grid-cols-[repeat(auto-fit,_minmax(250px,_1fr))] gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {#each products as product (product.id)}
         <div
           class="border-2 border-gray-300 rounded-lg overflow-hidden bg-gray-100 transition-transform transform hover:translate-y-[-5px] hover:shadow-lg cursor-pointer"

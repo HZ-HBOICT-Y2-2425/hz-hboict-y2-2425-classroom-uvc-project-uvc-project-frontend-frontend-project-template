@@ -75,7 +75,7 @@
       <p class="text-lg text-gray-600">Fuse your Finds, with Hungry Minds!</p>
       <p class="text-gray-600">
         <!-- Placeholder for additional text -->
-        Bij FoodieFuse geloven we in de kracht van verbinding en duurzaamheid. Ons platform is er om buurten samen te brengen, mensen te helpen elkaar te ondersteunen en gezamenlijk voedselverspilling tegen te gaan. Heb je een ingrediënt nodig, maar mis je dat ene product in je keukenkastje? Geen zorgen! Met FoodieFuse kun je eenvoudig in contact komen met buren die het wel in huis hebben, zodat je jouw kookplannen niet hoeft te wijzigen. 
+        Bij FoodieFuse geloven we in de kracht van verbinding en duurzaamheid. Ons platform is er om buurten samen te brengen, mensen te helpen elkaar te ondersteunen en gezamenlijk voedselverspilling tegen te gaan. Heb je een ingrediënt nodig, maar mis je dat ene product in je keukenkastje? Geen zorgen! Met FoodieFuse kun je eenvoudig in contact komen met buren die het wel in huis hebben, zodat je jouw kookplannen niet hoeft te wijzigen.
         <br><br>
         Wij vinden het belangrijk om lokale gemeenschappen te versterken en tegelijkertijd onze impact op het milieu te verkleinen. Door producten te delen, verminderen we niet alleen voedselverspilling, maar dragen we ook bij aan het verminderen van CO2-uitstoot. Elke keer dat we samen werken, sparen we transportkilometers uit en zorgen we voor minder afval.
         <br><br>

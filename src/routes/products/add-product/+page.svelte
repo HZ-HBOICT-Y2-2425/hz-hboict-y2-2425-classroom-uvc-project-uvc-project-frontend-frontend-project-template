@@ -14,6 +14,14 @@
     let allergiesList = [];
     let showDropdown = false;
     let showPopup = false;
+    let errors = {
+        title: false,
+        consumables: false,
+        price: false,
+        amount: false,
+        unit: false,
+        description: false,
+    };
 
     // Reactive waarde van userID
     $: userID = $user?.id || 1; // Dummy userID als fallback
@@ -35,9 +43,20 @@
 
     onMount(fetchData);
 
+    // Valideer de velden en toon fouten
+    function validateFields() {
+        errors.title = !title;
+        errors.consumables = !consumables;
+        errors.price = !price || price <= 0;
+        errors.amount = !amount || amount <= 0;
+        errors.unit = !unit;
+        errors.description = !description;
+    }
+
     async function addProduct() {
-        if (!title || !price || !amount || !unit || !description ||  !consumables) {
-            alert('Alle velden zijn verplicht!');
+        validateFields();
+        if (Object.values(errors).includes(true)) {
+            alert('Alle velden zijn verplicht en moeten correct zijn!');
             return;
         }
 
@@ -87,11 +106,11 @@
     <form on:submit|preventDefault={addProduct} class="space-y-4">
         <div>
             <label class="block mb-1 font-medium">Titel:</label>
-            <input bind:value={title} class="border p-2 w-full" type="text" placeholder="Titel" required />
+            <input bind:value={title} class="border p-2 w-full {errors.title ? 'border-red-500' : 'border-gray-300'}" type="text" placeholder="Titel" required />
         </div>
         <div>
             <label class="block mb-1 font-medium">Categorie:</label>
-            <select bind:value={consumables} class="border p-2 w-full" required>
+            <select bind:value={consumables} class="border p-2 w-full {errors.consumables ? 'border-red-500' : 'border-gray-300'}" required>
                 <option value="" disabled>Selecteer een categorie</option>
                 {#each consumablesList as consumable}
                     <option value={consumable.id}>{consumable.name}</option>
@@ -122,28 +141,27 @@
         </div>
         <div>
             <label class="block mb-1 font-medium">Prijs (€):</label>
-            <input bind:value={price} class="border p-2 w-full" type="number" step="0.01" placeholder="Prijs" required min="0" />
+            <input bind:value={price} class="border p-2 w-full {errors.price ? 'border-red-500' : 'border-gray-300'}" type="number" step="0.01" placeholder="Prijs" required />
         </div>
         <div>
             <label class="block mb-1 font-medium">Hoeveelheid:</label>
-            <input bind:value={amount} class="border p-2 w-full" type="number" placeholder="Hoeveelheid" required min="0" />
+            <input bind:value={amount} class="border p-2 w-full {errors.amount ? 'border-red-500' : 'border-gray-300'}" type="number" placeholder="Hoeveelheid" required />
         </div>
         <div>
             <label class="block mb-1 font-medium">Eenheid:</label>
-            <select bind:value={unit} class="border p-2 w-full" required>
+            <select bind:value={unit} class="border p-2 w-full {errors.unit ? 'border-red-500' : 'border-gray-300'}" required>
                 <option value="" disabled>Selecteer een eenheid</option>
                 <option value="kg">Kilogram (kg)</option>
                 <option value="g">Gram (g)</option>
                 <option value="l">Liter (l)</option>
                 <option value="ml">Milliliter (ml)</option>
-                <option value="pcs">Stuks (pcs)</option>
             </select>
         </div>
         <div>
             <label class="block mb-1 font-medium">Beschrijving:</label>
-            <textarea bind:value={description} class="border p-2 w-full" placeholder="Beschrijving" required></textarea>
+            <textarea bind:value={description} class="border p-2 w-full {errors.description ? 'border-red-500' : 'border-gray-300'}" placeholder="Beschrijving" required></textarea>
         </div>
-        <button class="bg-blue-500 text-white p-2 rounded mt-4">Toevoegen</button>
+        <button class="bg-blue-500 text-white p-2 rounded mt-4 w-full md:w-auto">Toevoegen</button>
     </form>
 
     {#if showPopup}
@@ -154,12 +172,3 @@
     </div>
     {/if}
 </div>
-
-<style>
-.container {
-    max-width: 600px;
-}
-.relative {
-    position: relative;
-}
-</style>
