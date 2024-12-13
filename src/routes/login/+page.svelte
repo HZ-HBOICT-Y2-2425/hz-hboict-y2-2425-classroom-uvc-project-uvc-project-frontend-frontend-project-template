@@ -1,50 +1,64 @@
 <script>
-    import Form from "$lib/components/input/form.svelte";
-    import { areFieldsFilled, assignUserInputToFields, communicateWithApi } from "$lib/components/input/formUtils";
+    import { user } from "$lib/store";
+    import { loadCart } from "../../stores/cart"; // Zorg ervoor dat we de winkelwagen opnieuw laden
 
-    let fieldsFilled = null;
-    let userFound = true;
-    let fields = {
-        user: {
-            value: null,
-            placeholder: "Gebruikersnaam"
-        },
-        password: {
-            value: null,
-            placeholder: "Wachtwoord",
-            type: "password"
-        }
-    }
+    let passwordIncorrect = false;
+    let data;
 
+    // Loginfunctie
     async function login() {
-        fields = assignUserInputToFields(fields);
-        fieldsFilled = areFieldsFilled(fields);
-        if (fieldsFilled) {
-            const url = `http://localhost:3010/user/login?user=${fields.user.value}&password=${fields.password.value}`
-            userFound = true;
-            userFound = await communicateWithApi(url, 'GET');
+        const name = document.getElementById("name").value;
+        const password = document.getElementById("password").value;
+
+        if (name && password) {
+            const url = `http://localhost:3010/user/login?user=${name}&password=${password}`;
+
+            try {
+                const res = await fetch(url, { method: "GET" });
+                data = await res.json();
+
+                // Bewaar de gebruikersdata in de store
+                user.set(data);
+
+                // Sla de gebruikersinformatie op in localStorage
+                localStorage.setItem("userId", data.id); // Bewaar de gebruikers-ID in localStorage
+
+                // Laad de winkelwagen voor de ingelogde gebruiker en update de store onmiddellijk
+                loadCart(); // Laad de winkelwagen opnieuw, dit zou de store moeten bijwerken
+            } catch (err) {
+                passwordIncorrect = true;
+            }
         }
     }
 
+    // Uitlogfunctie
+    function logout() {
+        user.set(null); // Reset de user store naar null (uitloggen)
+        localStorage.removeItem("userId"); // Verwijder de opgeslagen gebruikers-ID uit localStorage
+        sessionStorage.removeItem("userId"); // Verwijder de gebruikers-ID uit sessionStorage (indien gebruikt)
+
+        // Leeg de winkelwagen
+        localStorage.setItem("cart", JSON.stringify([])); // Reset de winkelwagen in localStorage
+    }
 </script>
 
-<div class="flex flex-row items-center justify-center min-h-screen bg-gray-100">
-    <section class="bg-white shadow-md rounded-lg p-8 w-full max-w-sm">
-        <h1 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Inloggen</h1>
+<div>
+    <a href="/">terug</a>
 
-        <Form fields={fields}/>
+    {#if $user}
+        <h1>Hello {$user.name}!</h1>
+        <button on:click={logout}>Uitloggen</button>
+        <!-- Uitlogknop -->
+    {:else}
+        <h1>Inloggen:</h1>
+        <input id="name" placeholder="gebruikersnaam of email" />
+        <input id="password" placeholder="wachtwoord" type="password" />
 
-        {#if fieldsFilled === false}
-            <p class="text-sm text-red-500 mb-4">Vul alles in</p>
-        {:else if !userFound}
-            <p class="text-sm text-red-500 mb-4">Wachtwoord of gebruikersnaam incorrect</p>
+        {#if passwordIncorrect}
+            <p>wachtwoord of gebruikersnaam incorrect</p>
         {/if}
-        
-        <button 
-            on:click={() => login()} 
-            class="w-full px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-            Login
-        </button>
-    </section>
+
+        <button on:click={login}>Inloggen</button>
+        <!-- Login knop -->
+    {/if}
 </div>
