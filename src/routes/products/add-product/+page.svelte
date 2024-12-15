@@ -91,7 +91,6 @@
         }
     }
 
-    // Toggle een allergie aan/uit
     function toggleAllergy(id) {
         if (selectedAllergies.includes(id)) {
             selectedAllergies = selectedAllergies.filter(allergy => allergy !== id);
