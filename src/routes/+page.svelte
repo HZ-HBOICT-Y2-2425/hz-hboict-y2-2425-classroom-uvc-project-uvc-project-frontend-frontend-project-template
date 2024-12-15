@@ -1,6 +1,7 @@
 <script>
-  import { user } from '$lib/store'; // Importeer de user store
+  import { user } from '$lib/store'; 
   import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';  // Voeg deze import toe
   import '../app.css';
 
   let categories = [
@@ -28,7 +29,6 @@
 
   $: userID = $user?.id || 1; // Dummy userID als fallback
   let products = [];
-  let selectedProduct = null;
   let error = null;
 
   // Haal de producten op van de API die specifiek door deze gebruiker zijn toegevoegd
@@ -47,17 +47,9 @@
     }
   });
 
-  // Haal details van een specifiek product op
-  const getProductDetails = async (productid) => {
-    try {
-      const response = await fetch(`http://localhost:3013/product/${productid}`);
-      if (!response.ok) {
-        throw new Error('Kon productdetails niet laden.');
-      }
-      selectedProduct = await response.json();
-    } catch (err) {
-      console.error('Fout bij het ophalen van productdetails:', err);
-    }
+  // Navigeer naar de product detailpagina met dynamisch productID
+  const viewProductDetails = (productId) => {
+    goto(`/products/${productId}`);  // Navigeer naar de detailpagina met het productID
   };
 </script>
 
@@ -116,7 +108,7 @@
               {/if}
               <button
                 class="mt-4 bg-[#69A571] text-white px-4 py-2 rounded-md"
-                on:click={() => getProductDetails(product.id)}
+                on:click={() => viewProductDetails(product.id)}
               >
                 Bekijk details
               </button>
@@ -128,22 +120,6 @@
       <p class="text-gray-600">Je hebt nog geen producten toegevoegd. Begin met het toevoegen van producten om te verkopen of delen!</p>
     {/if}
   </section>
-
-  <!-- Product Detail Section (optioneel) -->
-  {#if selectedProduct}
-    <section class="px-4 md:px-16 py-8 bg-gray-100">
-      <h2 class="text-3xl font-bold mb-6">Product Details</h2>
-      <div class="bg-white p-6 rounded-lg shadow-md">
-        <h3 class="text-2xl font-bold">{selectedProduct.title}</h3>
-        <img src={selectedProduct.image} alt={selectedProduct.title} class="h-60 w-full object-cover mt-4" />
-        <p class="text-lg text-gray-600 mt-4">{selectedProduct.description}</p>
-        <p class="text-gray-700 font-semibold mt-2">Prijs: €{selectedProduct.price}</p>
-        <p class="text-gray-500 mt-2">Aantal: {selectedProduct.amount} {selectedProduct.unit}</p>
-        <p class="text-gray-500">CO2-bijdrage: {selectedProduct.co2Contribution} kg</p>
-        <p class="text-gray-500">Vervaldatum: {new Date(selectedProduct.expirationDate).toLocaleDateString()}</p>
-      </div>
-    </section>
-  {/if}
 
   <!-- About Section -->
   <section class="flex flex-col md:flex-row items-center gap-12 px-4 md:px-16 py-16 bg-gray-100">
