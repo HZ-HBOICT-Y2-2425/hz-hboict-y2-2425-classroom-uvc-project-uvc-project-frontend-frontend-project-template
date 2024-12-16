@@ -1,8 +1,7 @@
 <script>
     import { user } from '$lib/store'; // Importeer de user store
     import { onMount } from 'svelte';
-    import { goto } from '$app/navigation'; // Voor navigatie
-
+    import { goto } from '$app/navigation'; 
     let title = '';
     let consumables = '';
     let selectedAllergies = [];
@@ -91,7 +90,6 @@
         }
     }
 
-    // Toggle een allergie aan/uit
     function toggleAllergy(id) {
         if (selectedAllergies.includes(id)) {
             selectedAllergies = selectedAllergies.filter(allergy => allergy !== id);
