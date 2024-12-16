@@ -1,0 +1,100 @@
+<script>
+  import { user } from '$lib/store'; // Zorg ervoor dat je de juiste user store importeert
+  import { onMount } from 'svelte';
+  import { page } from '$app/stores'; // Importeer de $page store van SvelteKit
+  import { goto } from '$app/navigation'; // Zorg ervoor dat je de goto-functie importeert
+
+  let recipeId; // Dit is nu de variabele die we gebruiken in plaats van reviewId
+  let existingReview = null;
+  let costRating = 1;
+  let difficultyRating = 1;
+  let tasteRating = 1;
+  let userId;
+
+  // Zorg ervoor dat recipeId beschikbaar is uit de URL-parameters
+  $: {
+    if ($page.params && $page.params.reviewId) {
+      recipeId = $page.params.reviewId; // Gebruik reviewId als recipeId
+    }
+  }
+
+  // Zorg ervoor dat userId altijd uit de store komt
+  $: userId = $user?.id;
+
+  // Controleer of er al een review is voor dit recept
+  onMount(async () => {
+    if (!userId || !recipeId) return; // Controleer of zowel userId als recipeId beschikbaar zijn
+
+    const response = await fetch(`http://localhost:3010/reviews/user/${userId}`);
+    if (response.ok) {
+      const reviews = await response.json();
+      existingReview = reviews.find(review => review.recipeId == recipeId); // Zoek naar de review met het juiste recipeId
+    } else {
+      console.error('Fout bij het ophalen van reviews');
+    }
+  });
+
+  // Functie om de review in te sturen
+  async function submitReview() {
+    if (existingReview) {
+      alert('Je hebt al een review voor dit recept.');
+      return;
+    }
+
+    try {
+      // Gebruik recipeID in plaats van reviewID in de querystring
+      const queryParams = new URLSearchParams({
+        userID: userId,
+        recipeID: recipeId, // Verander reviewID naar recipeID
+        costRating: costRating,
+        difficultyRating: difficultyRating,
+        tasteRating: tasteRating
+      }).toString();
+
+      const response = await fetch(`http://localhost:3016/create?${queryParams}`, {
+        method: 'POST',
+      });
+
+      if (response.ok) {
+        alert('Review succesvol toegevoegd!');
+        goto(`/dishes/${recipeId}`); // Gebruik goto om naar de gerechtpagina te navigeren
+      } else {
+        const error = await response.json();
+        console.error('Server fout:', error);
+        throw new Error('Fout bij het toevoegen van de review');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Er is een fout opgetreden bij het toevoegen van de review.');
+    }
+  }
+</script>
+
+{#if existingReview}
+  <div class="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <p class="text-center text-xl font-semibold text-red-600">Je hebt al een review voor dit recept.</p>
+  </div>
+{:else}
+  <div class="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <h1 class="text-3xl font-bold mb-6 text-center text-custom-green">Schrijf een review</h1>
+    
+    <div class="mb-4">
+      <label class="block text-lg font-medium mb-2">Kosten</label>
+      <input type="number" bind:value={costRating} min="1" max="5" class="w-full p-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-custom-green" />
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-lg font-medium mb-2">Moeilijkheid</label>
+      <input type="number" bind:value={difficultyRating} min="1" max="5" class="w-full p-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-custom-green" />
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-lg font-medium mb-2">Smaak</label>
+      <input type="number" bind:value={tasteRating} min="1" max="5" class="w-full p-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-custom-green" />
+    </div>
+
+    <div class="flex justify-center mt-6">
+      <button on:click={submitReview} class="bg-custom-green text-white py-2 px-6 rounded-md hover:bg-green-600 transition duration-200">Verzenden</button>
+    </div>
+  </div>
+{/if}

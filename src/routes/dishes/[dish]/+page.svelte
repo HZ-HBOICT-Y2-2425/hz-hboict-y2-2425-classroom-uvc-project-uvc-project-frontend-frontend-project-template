@@ -1,14 +1,15 @@
 <script>
   import { cart, loadCart, saveCart, clearLocalCart } from '../../../stores/cart'; // Winkelwagen store importeren
   import { onMount } from 'svelte';
-  import { page } from '$app/stores';
-  const { params } = $page;
-  const { dish } = params;
+  import { page } from '$app/stores'; // Importeer de $page store om route parameters te krijgen
+  import { goto } from '$app/navigation'; // Importeer goto voor navigatie
+  const { params } = $page;  // Haal de routeparameters op
+  const { dish } = params;   // Verkrijg de 'dish' parameter uit de route
   let recipe;
   let people = 1;
   let selectedIngredients = [];
-  let userId = 1; // Gebruik de huidige ingelogde gebruiker (hardcoded voorbeeld)
-  let addedToCart = false; // Staat voor de toevoeging aan de winkelwagen
+  let userId = 1; // Huidige ingelogde gebruiker (voorbeeld)
+  let addedToCart = false; // Status of item toegevoegd aan winkelwagen
 
   // Haal receptdata op via de API
   onMount(async () => {
@@ -71,6 +72,11 @@
   const changePeople = (delta) => {
     people = Math.max(1, people + delta);
   };
+
+  // Navigeren naar de reviewpagina
+  const goToReviews = () => {
+    goto(`/reviews/${dish}`); // Gebruik de dish als reviewId
+  };
 </script>
 
 {#if recipe}
@@ -124,6 +130,16 @@
         {recipe.description}
       </p>
     </div>
+  </div>
+
+  <!-- Schrijf een review knop onder de ingrediënten sectie -->
+  <div class="ml-10 mt-4">
+    <button 
+      class="p-2 bg-blue-500 text-white rounded" 
+      on:click={goToReviews}
+    >
+      Schrijf een review
+    </button>
   </div>
 
 {:else}
