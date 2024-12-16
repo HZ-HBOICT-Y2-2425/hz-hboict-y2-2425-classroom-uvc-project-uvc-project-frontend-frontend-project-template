@@ -1,11 +1,13 @@
 <script>
+  // @ts-nocheck
+
   import { onMount } from "svelte";
 
   export let dishes = ["Spaghetti", "Sushi", "Tacos"];
 
   // State for each dropdown
   let dropdownStates = {
-    Groentes: false,
+    Categorieën: false,
     Allergieën: false,
     Seizoen: false,
     VindIkLeuks: false,
@@ -13,10 +15,10 @@
 
   // Define dropdown content for each key
   const dropdownContent = {
-    vegetables: ["Carrot", "Broccoli", "Spinach"],
-    allergies: ["Peanuts", "Shellfish", "Dairy"],
-    season: ["Apple", "Banana", "Cherry"],
-    likes: ["Water", "Juice", "Soda"],
+    Categorieën: [],
+    Allergieën: [],
+    Seizoen: [],
+    VindIkLeuks: [],
   };
 
   let query = ""; // Holds the search input value
@@ -36,6 +38,39 @@
       recipes = await response.json();
     } catch (err) {
       error = err.message;
+    }
+  });
+
+  onMount(async () => {
+    try {
+      const response = await fetch("http://localhost:3015/consumables");
+      if (!response.ok) throw new Error("Failed to fetch consumables");
+      const consumables = await response.json();
+      dropdownContent.Categorieën = consumables.map((item) => item.name);
+    } catch (err) {
+      console.error("Error fetching consumables:", err.message);
+    }
+  });
+
+  onMount(async () => {
+    try {
+      const response = await fetch("http://localhost:3015/allergies");
+      if (!response.ok) throw new Error("Failed to fetch allergies");
+      const consumables = await response.json();
+      dropdownContent.Allergieën = consumables.map((item) => item.name);
+    } catch (err) {
+      console.error("Error fetching consumables:", err.message);
+    }
+  });
+
+  onMount(async () => {
+    try {
+      const response = await fetch("http://localhost:3014/seasons");
+      if (!response.ok) throw new Error("Failed to fetch seasons");
+      const consumables = await response.json();
+      dropdownContent.Seizoen = consumables.map((item) => item.name);
+    } catch (err) {
+      console.error("Error fetching consumables:", err.message);
     }
   });
 
@@ -115,7 +150,7 @@
 </div>
 
 <!-- Recipes Section -->
-<div class="grid grid-cols-2 gap-4 mx-auto justify-center max-w-[50%] mt-20">
+<div class="grid grid-cols-4 gap-4 mx-auto justify-center max-w-[90%] mt-20">
   {#if error}
     <p class="text-red-600">{error}</p>
   {:else if recipes.length === 0}
@@ -124,10 +159,21 @@
     {#each recipes as recipe}
       <a
         href={`/dishes/${recipe.id}`}
-        class="btn px-4 py-2 border-2 border-black bg-green-500 rounded min-w-[8vw] text-center text-white"
+        class="btn px-4 py-2 rounded min-w-[8vw] text-center text-white"
       >
-        {recipe.name}
-      </a>
+        <div
+          class="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition"
+        >
+          <img
+            src={recipe.image_url}
+            alt={recipe.name}
+            class="h-60 w-full object-cover"
+          />
+          <div class="p-4">
+            <h3 class="text-lg font-bold text-gray-800">{recipe.name}</h3>
+          </div>
+        </div></a
+      >
     {/each}
   {/if}
 </div>
