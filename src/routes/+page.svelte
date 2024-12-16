@@ -1,7 +1,7 @@
 <script>
   import { user } from '$lib/store'; 
   import { onMount } from 'svelte';
-  import { goto } from '$app/navigation';  // Voeg deze import toe
+  import { goto } from '$app/navigation';  
   import '../app.css';
 
   let categories = [

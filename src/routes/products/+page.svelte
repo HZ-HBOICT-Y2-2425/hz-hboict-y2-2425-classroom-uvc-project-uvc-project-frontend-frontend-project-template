@@ -1,4 +1,5 @@
 <script>
+    import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
 
   let products = [];
@@ -36,18 +37,16 @@
   });
 
   function navigateToAddProduct() {
-    window.location.href = 'products/add-product';
+    goto('products/add-product');
   }
 </script>
 
 <div class="container mx-auto p-4">
   <div class="flex justify-between items-center mb-4">
-    <!-- Groene titel -->
     <h1 class="text-2xl font-bold text-green-600">
       Producten
     </h1>
 
-    <!-- Knop met dezelfde kleur als de titel -->
     <button
       class="text-white px-4 py-2 rounded shadow hover:bg-green-600 transition"
       style="background-color: rgb(100, 173, 108);"
