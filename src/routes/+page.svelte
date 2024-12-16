@@ -92,34 +92,38 @@
     {#if error}
       <p class="text-red-600">{error}</p>
     {:else if products.length > 0}
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {#each products as product}
-          <div class="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
-            <img src={product.image || 'https://via.placeholder.com/300'} alt={product.title} class="h-60 w-full object-cover" />
-            <div class="p-4">
-              <h3 class="text-lg font-bold text-gray-800">{product.title}</h3>
-              <p class="text-gray-600 text-sm">{product.description}</p>
-              <p class="text-gray-700 font-semibold">Prijs: €{product.price}</p>
-              <p class="text-gray-500 text-sm">Aantal: {product.amount} {product.unit}</p>
-              <p class="text-gray-500 text-sm">CO2-bijdrage: {product.co2Contribution} kg</p>
-              <p class="text-gray-500 text-sm">Vervaldatum: {new Date(product.expirationDate).toLocaleDateString()}</p>
-              {#if product.reserved}
-                <p class="text-red-500 text-sm">Gereserveerd door gebruiker {product.reservedByUserID}</p>
-              {/if}
-              <button
-                class="mt-4 bg-[#69A571] text-white px-4 py-2 rounded-md"
-                on:click={() => viewProductDetails(product.id)}
-              >
-                Bekijk details
-              </button>
+      <!-- Scrollbare container -->
+      <div class="overflow-y-auto max-h-[600px] border border-gray-300 rounded-lg shadow-lg">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+          {#each products as product}
+            <div class="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+              <img src={product.image || 'https://via.placeholder.com/300'} alt={product.title} class="h-60 w-full object-cover" />
+              <div class="p-4">
+                <h3 class="text-lg font-bold text-gray-800">{product.title}</h3>
+                <p class="text-gray-600 text-sm">{product.description}</p>
+                <p class="text-gray-700 font-semibold">Prijs: €{product.price}</p>
+                <p class="text-gray-500 text-sm">Aantal: {product.amount} {product.unit}</p>
+                <p class="text-gray-500 text-sm">CO2-bijdrage: {product.co2Contribution} kg</p>
+                <p class="text-gray-500 text-sm">Vervaldatum: {new Date(product.expirationDate).toLocaleDateString()}</p>
+                {#if product.reserved}
+                  <p class="text-red-500 text-sm">Gereserveerd door gebruiker {product.reservedByUserID}</p>
+                {/if}
+                <button
+                  class="mt-4 bg-[#69A571] text-white px-4 py-2 rounded-md"
+                  on:click={() => viewProductDetails(product.id)}
+                >
+                  Bekijk details
+                </button>
+              </div>
             </div>
-          </div>
-        {/each}
+          {/each}
+        </div>
       </div>
     {:else}
       <p class="text-gray-600">Je hebt nog geen producten toegevoegd. Begin met het toevoegen van producten om te verkopen of delen!</p>
     {/if}
   </section>
+  
 
   <!-- About Section -->
   <section class="flex flex-col md:flex-row items-center gap-12 px-4 md:px-16 py-16 bg-gray-100">
