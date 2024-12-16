@@ -71,30 +71,71 @@
 </script>
 
 {#if existingReview}
-  <div class="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-    <p class="text-center text-xl font-semibold text-red-600">Je hebt al een review voor dit recept.</p>
-  </div>
+  <p class="text-center text-lg">Je hebt al een review voor dit recept.</p>
 {:else}
-  <div class="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-    <h1 class="text-3xl font-bold mb-6 text-center text-custom-green">Schrijf een review</h1>
-    
-    <div class="mb-4">
-      <label class="block text-lg font-medium mb-2">Kosten</label>
-      <input type="number" bind:value={costRating} min="1" max="5" class="w-full p-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-custom-green" />
-    </div>
+  <div class="max-w-md mx-auto p-4">
+    <h1 class="text-2xl font-bold text-custom-green text-center mb-6">Schrijf een review</h1>
 
-    <div class="mb-4">
-      <label class="block text-lg font-medium mb-2">Moeilijkheid</label>
-      <input type="number" bind:value={difficultyRating} min="1" max="5" class="w-full p-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-custom-green" />
-    </div>
+    <form on:submit|preventDefault={submitReview} class="space-y-6">
+      <!-- Kosten input -->
+      <div class="flex flex-col">
+        <label for="costRating" class="text-lg font-medium text-gray-700 mb-2">Kosten:</label>
+        <input 
+          type="number" 
+          id="costRating" 
+          bind:value={costRating} 
+          min="1" 
+          max="5" 
+          class="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-custom-green w-full {costRating < 1 || costRating > 5 ? 'border-red-500' : 'border-gray-300'}"
+          required
+        />
+        {#if costRating < 1 || costRating > 5}
+          <p class="text-red-500 text-sm text-center">De waarde moet tussen 1 en 5 liggen.</p>
+        {/if}
+      </div>
 
-    <div class="mb-4">
-      <label class="block text-lg font-medium mb-2">Smaak</label>
-      <input type="number" bind:value={tasteRating} min="1" max="5" class="w-full p-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-custom-green" />
-    </div>
+      <!-- Moeilijkheid input -->
+      <div class="flex flex-col">
+        <label for="difficultyRating" class="text-lg font-medium text-gray-700 mb-2">Moeilijkheid:</label>
+        <input 
+          type="number" 
+          id="difficultyRating" 
+          bind:value={difficultyRating} 
+          min="1" 
+          max="5" 
+          class="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-custom-green w-full {difficultyRating < 1 || difficultyRating > 5 ? 'border-red-500' : 'border-gray-300'}"
+          required
+        />
+        {#if difficultyRating < 1 || difficultyRating > 5}
+          <p class="text-red-500 text-sm text-center">De waarde moet tussen 1 en 5 liggen.</p>
+        {/if}
+      </div>
 
-    <div class="flex justify-center mt-6">
-      <button on:click={submitReview} class="bg-custom-green text-white py-2 px-6 rounded-md hover:bg-green-600 transition duration-200">Verzenden</button>
-    </div>
+      <!-- Smaak input -->
+      <div class="flex flex-col">
+        <label for="tasteRating" class="text-lg font-medium text-gray-700 mb-2">Smaak:</label>
+        <input 
+          type="number" 
+          id="tasteRating" 
+          bind:value={tasteRating} 
+          min="1" 
+          max="5" 
+          class="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-custom-green w-full {tasteRating < 1 || tasteRating > 5 ? 'border-red-500' : 'border-gray-300'}"
+          required
+        />
+        {#if tasteRating < 1 || tasteRating > 5}
+          <p class="text-red-500 text-sm text-center">De waarde moet tussen 1 en 5 liggen.</p>
+        {/if}
+      </div>
+
+      <!-- Verzenden knop -->
+      <button 
+        type="submit" 
+        class="w-full bg-custom-green text-white py-2 px-6 rounded-md hover:bg-green-600 transition duration-200 mt-4">
+        Verzenden
+      </button>
+    </form>
   </div>
 {/if}
+
+
