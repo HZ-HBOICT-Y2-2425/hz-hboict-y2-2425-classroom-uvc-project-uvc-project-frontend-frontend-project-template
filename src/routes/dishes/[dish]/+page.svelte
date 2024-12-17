@@ -57,6 +57,7 @@
       cost: (totalCost / count).toFixed(1),
       difficulty: (totalDifficulty / count).toFixed(1),
       total: (totalRating / count).toFixed(1),
+      reviewCount: count, // Voeg het aantal reviews toe
     };
   };
 
@@ -143,19 +144,25 @@
   </div>
 
   <!-- Gemiddelde Review -->
-  <div class="text-center mt-6">
-    <h2 class="text-2xl font-bold mb-2">Gemiddelde Beoordeling</h2>
-    {#if averageReview}
-      <div class="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-8">
-        <p>⭐ <strong>{averageReview.total}</strong>/5</p>
-        <p>💰 Kosten: {averageReview.cost}/5</p>
-        <p>⚙️ Moeilijkheid: {averageReview.difficulty}/5</p>
-        <p>🍴 Smaak: {averageReview.taste}/5</p>
-      </div>
-    {:else}
-      <p>Geen reviews beschikbaar.</p>
+<div class="text-center mt-6">
+  <h2 class="text-2xl font-bold mb-2">
+    Gemiddelde Beoordeling 
+    {#if reviews.length > 0}
+      <span class="text-sm text-gray-500">({reviews.length} reviews)</span>
     {/if}
-  </div>
+  </h2>
+  {#if averageReview}
+    <div class="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-8">
+      <p>⭐ <strong>{averageReview.total}</strong>/5</p>
+      <p>💰 Kosten: {averageReview.cost}/5</p>
+      <p>⚙️ Moeilijkheid: {averageReview.difficulty}/5</p>
+      <p>🍴 Smaak: {averageReview.taste}/5</p>
+    </div>
+  {:else}
+    <p>Geen reviews beschikbaar.</p>
+  {/if}
+</div>
+
 
   <!-- Review Knop -->
   <div class="flex justify-center mt-4">
