@@ -5,81 +5,6 @@
   let isLoading = true;
   let error = null;
 
-  // State for each dropdown
-  let dropdownStates = {
-    Categorieën: false,
-    Allergieën: false,
-    Seizoen: false,
-    VindIkLeuks: false,
-  };
-
-  // Define dropdown content for each key
-  const dropdownContent = {
-    Categorieën: [],
-    Allergieën: [],
-    Seizoen: [],
-    VindIkLeuks: [],
-  };
-
-  // Function to toggle a specific dropdown
-  function toggleDropdown(key) {
-    // Toggle the clicked dropdown while closing others
-    for (const dropdown in dropdownStates) {
-      if (dropdown !== key) {
-        dropdownStates[dropdown] = false; // Close other dropdowns
-      }
-    }
-    dropdownStates[key] = !dropdownStates[key]; // Toggle the clicked dropdown
-  }
-
-  // Close all dropdowns when clicking outside
-  function handleClickOutside(event) {
-    if (!event.target.closest(".dropdown")) {
-      for (const key in dropdownStates) {
-        dropdownStates[key] = false; // Close all dropdowns
-      }
-    }
-  }
-
-  // Attach event listener to document
-  onMount(() => {
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  });
-
-  onMount(async () => {
-    try {
-      const response = await fetch("http://localhost:3015/consumables");
-      if (!response.ok) throw new Error("Failed to fetch consumables");
-      const consumables = await response.json();
-      dropdownContent.Categorieën = consumables.map((item) => item.name);
-    } catch (err) {
-      console.error("Error fetching consumables:", err.message);
-    }
-  });
-
-  onMount(async () => {
-    try {
-      const response = await fetch("http://localhost:3015/allergies");
-      if (!response.ok) throw new Error("Failed to fetch allergies");
-      const consumables = await response.json();
-      dropdownContent.Allergieën = consumables.map((item) => item.name);
-    } catch (err) {
-      console.error("Error fetching consumables:", err.message);
-    }
-  });
-
-  onMount(async () => {
-    try {
-      const response = await fetch("http://localhost:3014/seasons");
-      if (!response.ok) throw new Error("Failed to fetch seasons");
-      const consumables = await response.json();
-      dropdownContent.Seizoen = consumables.map((item) => item.name);
-    } catch (err) {
-      console.error("Error fetching consumables:", err.message);
-    }
-  });
-
   onMount(async () => {
     try {
       // Laad de URLs van alle producten
@@ -111,36 +36,6 @@
     }
   });
 </script>
-
-<!-- Dropdown Menus -->
-<div class="grid grid-cols-2 mx-auto justify-center gap-6 max-w-[42%] mt-20">
-  {#each Object.keys(dropdownStates) as key (key)}
-    <div class="flex items-center justify-center text-center relative">
-      <div class="dropdown">
-        <!-- Dropdown Toggle Button -->
-        <button
-          class="btn px-4 py-2 border-2 border-black bg-zinc-200 rounded min-w-[8vw]"
-          on:click={() => toggleDropdown(key)}
-        >
-          {key}
-        </button>
-
-        <!-- Dropdown Menu -->
-        {#if dropdownStates[key]}
-          <ul
-            class="absolute bg-white border border-gray-300 rounded shadow-lg mt-2 w-52 z-10"
-          >
-            {#each dropdownContent[key] as item}
-              <li class="px-4 py-2 hover:bg-gray-200 cursor-pointer">
-                {item}
-              </li>
-            {/each}
-          </ul>
-        {/if}
-      </div>
-    </div>
-  {/each}
-</div>
 
 {#if isLoading}
   <p class="text-center text-gray-600">Producten worden geladen...</p>
