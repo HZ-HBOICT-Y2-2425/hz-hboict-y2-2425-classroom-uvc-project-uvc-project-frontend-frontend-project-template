@@ -12,6 +12,7 @@
   let userId = 1;
   let addedToCart = false;
   let reviews = []; // Opslag voor reviews
+  let averageReview = {}; // Gemiddelde review opslag
 
   // Recept en reviews ophalen bij pagina-load
   onMount(async () => {
@@ -35,12 +36,41 @@
       const response = await fetch(`http://localhost:3016/recipe/${dish}`);
       if (response.ok) {
         reviews = await response.json();
+        calculateAverageReview(); // Bereken gemiddelde review na ophalen
       } else {
         console.error('Geen reviews gevonden.');
       }
     } catch (error) {
       console.error('Fout bij ophalen van reviews:', error);
     }
+  };
+
+  // Bereken het gemiddelde van alle reviews
+  const calculateAverageReview = () => {
+    if (reviews.length === 0) {
+      averageReview = null;
+      return;
+    }
+
+    let totalTaste = 0;
+    let totalCost = 0;
+    let totalDifficulty = 0;
+    let totalRating = 0;
+
+    reviews.forEach(review => {
+      totalTaste += review.tasteRating || 0;
+      totalCost += review.costRating || 0;
+      totalDifficulty += review.difficultyRating || 0;
+      totalRating += review.totalRating || 0;
+    });
+
+    const count = reviews.length;
+    averageReview = {
+      taste: (totalTaste / count).toFixed(1),
+      cost: (totalCost / count).toFixed(1),
+      difficulty: (totalDifficulty / count).toFixed(1),
+      total: (totalRating / count).toFixed(1),
+    };
   };
 
   // Voeg ingrediënten toe aan de winkelwagen
@@ -135,6 +165,21 @@
     </div>
   </div>
 
+  <!-- Gemiddelde Review Sectie -->
+  <div class="text-center mt-6">
+    <h2 class="text-2xl font-bold mb-2">Gemiddelde Beoordeling</h2>
+    {#if averageReview}
+      <div class="flex justify-center space-x-8 text-lg">
+        <p>⭐ <strong>{averageReview.total}</strong>/5</p>
+        <p>Kosten: <strong>{averageReview.cost}</strong>/5</p>
+        <p>Moeilijkheid: <strong>{averageReview.difficulty}</strong>/5</p>
+        <p>Smaak: <strong>{averageReview.taste}</strong>/5</p>
+      </div>
+    {:else}
+      <p>Er zijn nog geen reviews voor dit recept.</p>
+    {/if}
+  </div>
+
   <!-- Schrijf een review knop -->
   <div class="text-center mt-6">
     <button 
@@ -152,14 +197,11 @@
       <ul class="space-y-4">
         {#each reviews as review}
           <li class="border rounded p-4 shadow">
-            <!-- Toon de gemiddelde beoordeling als sterren -->
-            <p class="text-lg font-semibold">⭐ {review.totalRating}/5</p>
-            <div class="text-gray-700">
-              <p>Kosten: {review.costRating}/5</p>
-              <p>Moeilijkheid: {review.difficultyRating}/5</p>
-              <p>Smaak: {review.tasteRating}/5</p>
-            </div>
-            <p class="text-sm text-gray-500 mt-2">Datum: {review.creationDate}</p>
+            <p class="text-lg font-semibold">⭐ Totale Beoordeling: {review.totalRating}/5</p>
+            <p>🍴 Smaak: {review.tasteRating || 'N.v.t.'}/5</p>
+            <p>💰 Kosten: {review.costRating || 'N.v.t.'}/5</p>
+            <p>⚙️ Moeilijkheid: {review.difficultyRating || 'N.v.t.'}/5</p>
+            <p class="text-sm text-gray-500 mt-2">📅 Datum: {review.creationDate}</p>
           </li>
         {/each}
       </ul>
