@@ -1,12 +1,16 @@
 <script>
-    import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
+  import { goto } from '$app/navigation'; // Importeren van goto om naar een andere pagina te navigeren
 
   let products = [];
   let isLoading = true;
   let error = null;
+  let searchQuery = '';  // Dit wordt de zoekquery die we uit de URL halen
 
   onMount(async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    searchQuery = urlParams.get('search') || '';  // Haal de zoekquery uit de URL
+
     try {
       // Laad de URLs van alle producten
       const response = await fetch('http://localhost:3010/products');
@@ -27,7 +31,10 @@
         })
       );
 
-      products = productDetails;
+      // Filter producten op basis van de zoekquery
+      products = productDetails.filter(product =>
+        product.title.toLowerCase().includes(searchQuery.toLowerCase())  // Zoek naar producten die de zoekterm bevatten
+      );
     } catch (err) {
       console.error('Error bij het laden van producten:', err);
       error = 'Producten konden niet worden geladen. Probeer het later opnieuw.';
