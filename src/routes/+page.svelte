@@ -27,24 +27,30 @@
     },
   ];
 
-  $: userID = $user?.id || 1; // Dummy userID als fallback
   let products = [];
   let error = null;
+  let userID;
 
   // Haal de producten op van de API die specifiek door deze gebruiker zijn toegevoegd
-  onMount(async () => {
-    try {
-      const response = await fetch(`http://localhost:3013/user/${userID}`);
-      if (!response.ok) {
-        throw new Error('Kon producten niet laden.');
-      }
+  onMount(() => {
+    setTimeout(async () => {
+      try {
+        // Stel de userID in met een kleine vertraging
+        userID = $user?.id || 1; // Gebruik een fallback van 1 als de userID niet beschikbaar is
+        console.log('Gebruiker ID:', userID);
 
-      products = await response.json();
-      console.log("Producten van gebruiker:", products); 
-    } catch (err) {
-      console.error('Fout bij het laden van producten:', err);
-      error = 'Kon jouw producten niet ophalen. Probeer het later opnieuw.';
-    }
+        const response = await fetch(`http://localhost:3013/user/${userID}`);
+        if (!response.ok) {
+          throw new Error('Kon producten niet laden.');
+        }
+
+        products = await response.json();
+        console.log("Producten van gebruiker:", products); 
+      } catch (err) {
+        console.error('Fout bij het laden van producten:', err);
+        error = 'Kon jouw producten niet ophalen. Probeer het later opnieuw.';
+      }
+    }, 100); // 100 milliseconden vertraging
   });
 
   // Navigeer naar de product detailpagina met dynamisch productID
@@ -87,12 +93,14 @@
   </section>
 
   <!-- Producten van de gebruiker Section -->
-  <section class="px-4 md:px-16">
-    <h2 class="text-3xl font-bold text-left mb-6">Jouw toegevoegde producten</h2>
-    {#if error}
-      <p class="text-red-600">{error}</p>
-    {:else if products.length > 0}
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+<section class="px-4 md:px-16">
+  <h2 class="text-3xl font-bold text-left mb-6">Jouw toegevoegde producten</h2>
+  {#if error}
+    <p class="text-red-600">{error}</p>
+  {:else if products.length > 0}
+    <!-- Scrollbare container -->
+    <div class="overflow-y-auto max-h-[600px] border border-gray-300 rounded-lg shadow-lg">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
         {#each products as product}
           <div class="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
             <img src={product.image || 'https://via.placeholder.com/300'} alt={product.title} class="h-60 w-full object-cover" />
@@ -116,10 +124,11 @@
           </div>
         {/each}
       </div>
-    {:else}
-      <p class="text-gray-600">Je hebt nog geen producten toegevoegd. Begin met het toevoegen van producten om te verkopen of delen!</p>
-    {/if}
-  </section>
+    </div>
+  {:else}
+    <p class="text-gray-600">Je hebt nog geen producten toegevoegd. Begin met het toevoegen van producten om te verkopen of delen!</p>
+  {/if}
+</section>
 
   <!-- About Section -->
   <section class="flex flex-col md:flex-row items-center gap-12 px-4 md:px-16 py-16 bg-gray-100">
