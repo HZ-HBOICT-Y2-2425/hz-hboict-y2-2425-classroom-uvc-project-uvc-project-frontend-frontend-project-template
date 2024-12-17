@@ -42,10 +42,9 @@
     }
 
     try {
-      // Gebruik recipeID in plaats van reviewID in de querystring
       const queryParams = new URLSearchParams({
         userID: userId,
-        recipeID: recipeId, // Verander reviewID naar recipeID
+        recipeID: recipeId, 
         costRating: costRating,
         difficultyRating: difficultyRating,
         tasteRating: tasteRating
@@ -137,5 +136,3 @@
     </form>
   </div>
 {/if}
-
-
