@@ -132,13 +132,13 @@
     <h1 class="text-2xl font-bold text-green-700 mb-4">{product.title}</h1>
     <img src="https://via.placeholder.com/800x400" alt="{product.title}" class="w-full h-auto rounded-lg mb-4" />
     <p class="mb-2"><strong>Omschrijving:</strong> {product.description}</p>
-    <p class="mb-2"><strong>Prijs:</strong> <span class="text-green-700 font-bold text-xl">${product.price.toFixed(2)}</span></p>
+    <p class="mb-2"><strong>Prijs:</strong> <span class="text-green-700 font-bold text-xl">€{product.price.toFixed(2)}</span></p>
     <p class="mb-2"><strong>Hoeveelheid:</strong> {product.amount} {product.unit}</p>
     <p class="mb-2"><strong>Gereserveerd:</strong> {product.reserved ? 'Ja' : 'Nee'}</p>
     <p class="mb-2"><strong>Ten minste houdbaar tot:</strong> {product.expirationDate || 'Niet beschikbaar'}</p>
 
     {#if distance !== null}
-      <p class="mt-4"><strong>Afstand naar verkoper:</strong> {distance}</p>
+      <p class="mt-4"><strong>Afstand naar verkoper:</strong> {distance} KM</p>
     {/if}
   </div>
 {:else}
