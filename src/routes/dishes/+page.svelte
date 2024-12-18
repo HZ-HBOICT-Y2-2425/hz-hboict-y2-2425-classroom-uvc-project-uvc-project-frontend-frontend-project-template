@@ -54,96 +54,15 @@
     } catch (err) {
       console.error("Error fetching consumables:", err.message);
     }
-
-    try {
-      const allergiesResponse = await fetch("http://localhost:3015/allergies");
-      if (!allergiesResponse.ok) throw new Error("Failed to fetch allergies");
-      const allergies = await allergiesResponse.json();
-      dropdownContent.Allergieën = allergies.map((item) => item.name);
-    } catch (err) {
-      console.error("Error fetching allergies:", err.message);
-    }
-
-    // try {
-    //   const seasonsResponse = await fetch("http://localhost:3014/seasons");
-    //   if (!seasonsResponse.ok) throw new Error("Failed to fetch seasons");
-    //   const seasons = await seasonsResponse.json();
-    //   dropdownContent.Seizoen = seasons.map((item) => item.name);
-    // } catch (err) {
-    //   console.error("Error fetching seasons:", err.message);
-    // }
   }
 
   // Watch for changes in filters and search query
   function filterRecipes() {
+    console.log(selectedFilters);
     filteredRecipes = recipes.filter((recipe) => {
-      // Map category IDs to their names
-      const recipeCategories = recipe.category
-        .map((categoryId) => {
-          const category = dropdownContent.Categorieën.find(
-            (cat) => cat.id === categoryId,
-          );
-          return category ? category.name : null;
-        })
-        .filter(Boolean); // Remove null values
-
-      // Map allergy IDs to their names
-      const recipeAllergies = recipe.allergyID
-        .map((allergyId) => {
-          const allergy = dropdownContent.Allergieën.find(
-            (allergy) => allergy.id === allergyId,
-          );
-          return allergy ? allergy.name : null;
-        })
-        .filter(Boolean); // Remove null values
-
-      // Map season IDs to their names
-      const recipeSeasons = recipe.seasonID
-        .map((seasonId) => {
-          const season = dropdownContent.Seizoen.find(
-            (season) => season.id === seasonId,
-          );
-          return season ? season.name : null;
-        })
-        .filter(Boolean); // Remove null values
-
-      // Check if recipe matches the search query
-      const matchesSearchQuery = recipe.name
-        .toLowerCase()
-        .includes(query.toLowerCase());
-
-      // Check if recipe matches the selected categories
-      const matchesCategories =
-        selectedFilters.Categorieën.length === 0 ||
-        selectedFilters.Categorieën.some((selectedCategory) =>
-          recipeCategories.some((category) =>
-            category.toLowerCase().includes(selectedCategory.toLowerCase()),
-          ),
-        );
-
-      // Check if recipe matches the selected allergies
-      const matchesAllergies =
-        selectedFilters.Allergieën.length === 0 ||
-        selectedFilters.Allergieën.some((selectedAllergy) =>
-          recipeAllergies.some((allergy) =>
-            allergy.toLowerCase().includes(selectedAllergy.toLowerCase()),
-          ),
-        );
-
-      // Check if recipe matches the selected seasons
-      const matchesSeasons =
-        selectedFilters.Seizoen.length === 0 ||
-        selectedFilters.Seizoen.some((selectedSeason) =>
-          recipeSeasons.some((season) =>
-            season.toLowerCase().includes(selectedSeason.toLowerCase()),
-          ),
-        );
-
       return (
-        matchesSearchQuery &&
-        matchesCategories &&
-        matchesAllergies &&
-        matchesSeasons
+        selectedFilters.Categorieën.length === 0 ||
+        selectedFilters.Categorieën.includes(recipe.category)
       );
     });
   }
