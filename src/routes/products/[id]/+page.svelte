@@ -1,10 +1,12 @@
 <script>
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
+  import { user } from '$lib/store';
+    import { goto } from '$app/navigation';
 
-  let product = {};  
-  let user = {};  
-  let storedUser = {};  
+  let product = {};
+  let seller;
+  let userIsSeller = false;
   let userLocation = null;  
   let sellerPostcodeLocation = null;  
   let distance = null;  
@@ -62,6 +64,15 @@
     });
   }
 
+  async function getData(url, errMessage) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(errMessage);
+    } catch (err) {
+      console.error('Fout bij het laden van product of gebruiker:', err);
+    }
+  }
+
   onMount(async () => {
     const productId = $page.params.id; // Haal de product id uit de URL
     try {
@@ -73,11 +84,13 @@
       if (!sellerResponse.ok) {
         throw new Error('Fout bij het ophalen van gebruikersinformatie');
       }
-      user = await sellerResponse.json();
+      seller = await sellerResponse.json();
 
-      if (user.zipcode) {
+      // userId wordt hier bekeken want als hij bovenaan de onMount staat heeft de userStore niet genoeg tijd om te initialiseren
+      userIsSeller = ($user.id === seller.id);
+      if (seller.zipcode) {
         try {
-          sellerPostcodeLocation = await fetchLocationFromPostcode(user.zipcode);
+          sellerPostcodeLocation = await fetchLocationFromPostcode(seller.zipcode);
         } catch (err) {
           console.error('Fout bij het ophalen van de verkoper locatie:', err);
           sellerPostcodeLocation = null; // Stel sellerPostcodeLocation in op null als locatie niet gevonden is
@@ -97,7 +110,7 @@
           );
           
           // Als de postcode van de gebruiker hetzelfde is als die van de verkoper
-          if (user.zipcode === product.zipcode) {
+          if (seller.zipcode === product.zipcode) {
             distance = "<1 km"; // Als de postcode hetzelfde is, toon "<1 km"
           }
 
@@ -131,6 +144,17 @@
   <div class="product-detail max-w-4xl mx-auto p-8 bg-gray-100 border border-gray-300 rounded-lg shadow-lg mt-8">
     <h1 class="text-2xl font-bold text-green-700 mb-4">{product.title}</h1>
     <img src="https://via.placeholder.com/800x400" alt="{product.title}" class="w-full h-auto rounded-lg mb-4" />
+
+      {#if seller}
+        {#if userIsSeller}
+          <p class="mb-2"><strong>Verkoper:</strong> Uw Product</p>
+        {:else}
+          <button on:click={() => goto(`/profile/${seller.id}`)} class="mb-2">
+            <strong>Verkoper:</strong> <span class="text-green-800 underline">{seller.name}</span>
+          </button>
+        {/if}
+      {/if}
+
     <p class="mb-2"><strong>Omschrijving:</strong> {product.description}</p>
     <p class="mb-2"><strong>Prijs:</strong> <span class="text-green-700 font-bold text-xl">€{product.price.toFixed(2)}</span></p>
     <p class="mb-2"><strong>Hoeveelheid:</strong> {product.amount} {product.unit}</p>
@@ -139,6 +163,21 @@
 
     {#if distance !== null}
       <p class="mt-4"><strong>Afstand naar verkoper:</strong> {distance} KM</p>
+    {/if}
+
+    {#if $user === null}
+      <p 
+        class="w-full px-4 py-2 mt-3 bg-gray-500 text-white text-center font-semibold rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
+      >
+        Log in om een reserveer verzoek te sturen
+      </p>
+    {:else if !userIsSeller}
+      <button 
+        on:click={() => { console.log("stuur reserveer req naar db")}} 
+        class="w-full px-4 py-2 mt-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
+      >
+        Reserveer
+      </button>
     {/if}
   </div>
 {:else}
