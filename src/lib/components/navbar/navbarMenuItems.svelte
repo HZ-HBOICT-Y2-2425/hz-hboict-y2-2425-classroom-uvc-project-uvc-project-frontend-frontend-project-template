@@ -2,10 +2,11 @@
     import { goto } from "$app/navigation";
 
     let menuItems = [
-        { id: 1, name: "Home", href: "/", icon: "fa-home" },
-        { id: 2, name: "Producten", href: "/products", icon: "fa-leaf" },
-        { id: 3, name: "Recepten", href: "/dishes", icon: "fa-cutlery" },
-        { id: 4, name: "Mandje", href: "/cart", icon: "fa-shopping-basket" },
+        { name: "Home", href: "/", icon: "fa-home" },
+        { name: "Producten", href: "/products", icon: "fa-leaf" },
+        { name: "Uw producten", href: "/your-products", icon: "fa-leaf" },
+        { name: "Recepten", href: "/dishes", icon: "fa-cutlery" },
+        { name: "Mandje", href: "/cart", icon: "fa-shopping-basket" },
     ];
 </script>
 
