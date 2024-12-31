@@ -30,9 +30,11 @@
   }
 
   async function fetchLocationFromPostcode(postcode) {
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(postcode)}&countrycodes=NL`;
-    const response = await fetch(url);
-    const data = await response.json();
+    const data = await getData(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(postcode)}&countrycodes=NL`,
+      'Geen locatie gevonden voor de opgegeven postcode.'
+    );
+
     if (data.length > 0) {
       return {
         lat: parseFloat(data[0].lat),
@@ -68,6 +70,8 @@
     try {
       const res = await fetch(url);
       if (!res.ok) throw new Error(errMessage);
+      let data = await res.json();
+      return data;
     } catch (err) {
       console.error('Fout bij het laden van product of gebruiker:', err);
     }
@@ -75,64 +79,51 @@
 
   onMount(async () => {
     const productId = $page.params.id; // Haal de product id uit de URL
-    try {
-      const response = await fetch(`http://localhost:3010/products/product/${productId}`);
-      if (!response.ok) throw new Error('Gefaald om product te laden');
-      product = await response.json();
+    product = await getData(`http://localhost:3010/products/product/${productId}`, 'Gefaald om product te laden');
+    seller = await getData(`http://localhost:3010/user/${product.userID}`, 'Fout bij het ophalen van gebruikersinformatie');
 
-      const sellerResponse = await fetch(`http://localhost:3010/user/${product.userID}`);
-      if (!sellerResponse.ok) {
-        throw new Error('Fout bij het ophalen van gebruikersinformatie');
-      }
-      seller = await sellerResponse.json();
-
-      // userId wordt hier bekeken want als hij bovenaan de onMount staat heeft de userStore niet genoeg tijd om te initialiseren
-      userIsSeller = ($user.id === seller.id);
-      if (seller.zipcode) {
-        try {
-          sellerPostcodeLocation = await fetchLocationFromPostcode(seller.zipcode);
-        } catch (err) {
-          console.error('Fout bij het ophalen van de verkoper locatie:', err);
-          sellerPostcodeLocation = null; // Stel sellerPostcodeLocation in op null als locatie niet gevonden is
-        }
-      }
-
+    if (seller.zipcode) {
       try {
-        userLocation = await getUserLocation();
-        console.log('Gebruiker locatie:', userLocation); 
+        sellerPostcodeLocation = await fetchLocationFromPostcode(seller.zipcode);
+      } catch (err) {
+        console.error('Fout bij het ophalen van de verkoper locatie:', err);
+        sellerPostcodeLocation = null; // Stel sellerPostcodeLocation in op null als locatie niet gevonden is
+      }
+    }
 
-        if (userLocation && sellerPostcodeLocation) {
-          distance = calculateDistance(
-            userLocation.lat,
-            userLocation.lon,
-            sellerPostcodeLocation.lat,
-            sellerPostcodeLocation.lon
-          );
-          
-          // Als de postcode van de gebruiker hetzelfde is als die van de verkoper
-          if (seller.zipcode === product.zipcode) {
-            distance = "<1 km"; // Als de postcode hetzelfde is, toon "<1 km"
-          }
+    try {
+      userLocation = await getUserLocation();
+      console.log('Gebruiker locatie:', userLocation); 
 
-          if (distance < 1) {
-            distance = "<1 km"; // Als de afstand kleiner is dan 1 km, geef dit weer als "<1 km"
-          } else {
-            distance = Math.round(distance);  // Anders, afronden naar een heel getal
-          }
-
-          console.log(`Afstand tussen jou en de verkoper: ${distance}`);
+      if (userLocation && sellerPostcodeLocation) {
+        distance = calculateDistance(
+          userLocation.lat,
+          userLocation.lon,
+          sellerPostcodeLocation.lat,
+          sellerPostcodeLocation.lon
+        );
+        
+        // Als de postcode van de gebruiker hetzelfde is als die van de verkoper
+        if (seller.zipcode === product.zipcode || distance < 1) {
+          distance = "<1 km"; // Als de postcode hetzelfde is, toon "<1 km" of als de afstand kleiner is dan 1 km, geef dit weer als "<1 km"
+        } else {
+          distance = Math.round(distance);  // Anders, afronden naar een heel getal
         }
 
-      } catch (err) {
-        console.error(err);
-        distance = null;  // Stel de afstand in op null als er een fout is
+        console.log(`Afstand tussen jou en de verkoper: ${distance}`);
       }
 
     } catch (err) {
-      console.error('Fout bij het laden van product of gebruiker:', err);
-    } finally {
-      isLoading = false;
+      console.error(err);
+      distance = null;  // Stel de afstand in op null als er een fout is
     }
+
+    setTimeout(() => {
+      if ($user) {
+        userIsSeller = ($user.id === seller.id);
+      }
+      isLoading = false;
+    }, 100);
   });
 </script>
 
