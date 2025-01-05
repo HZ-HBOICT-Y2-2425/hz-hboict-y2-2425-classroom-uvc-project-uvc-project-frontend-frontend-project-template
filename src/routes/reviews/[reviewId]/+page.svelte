@@ -1,10 +1,10 @@
 <script>
   import { user } from '$lib/store'; // Zorg ervoor dat je de juiste user store importeert
   import { onMount } from 'svelte';
-  import { page } from '$app/stores'; // Importeer de $page store van SvelteKit
-  import { goto } from '$app/navigation'; // Zorg ervoor dat je de goto-functie importeert
+  import { page } from '$app/stores'; 
+  import { goto } from '$app/navigation';
 
-  let recipeId; // Dit is nu de variabele die we gebruiken in plaats van reviewId
+  let recipeId; 
   let existingReview = null;
   let costRating = 1;
   let difficultyRating = 1;
@@ -56,7 +56,7 @@
 
       if (response.ok) {
         alert('Review succesvol toegevoegd!');
-        goto(`/dishes/${recipeId}`); // Gebruik goto om naar de gerechtpagina te navigeren
+        goto(`/dishes/${recipeId}`); 
       } else {
         const error = await response.json();
         console.error('Server fout:', error);
