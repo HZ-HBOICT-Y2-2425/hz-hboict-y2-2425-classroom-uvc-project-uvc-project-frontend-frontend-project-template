@@ -1,10 +1,10 @@
 <script>
   import { onMount } from 'svelte';
-  import { goto } from '$app/navigation';
-    import { user } from '$lib/store';
-    import { getData, getDataUrls } from '$lib/dataHandler';
-    import AddProductBtn from '$lib/components/product/addProductBtn.svelte';
-    import IndividualProductBtn from '$lib/components/product/individualProductBtn.svelte';
+  import { user } from '$lib/store';
+  import { getData, getDataUrls } from '$lib/dataHandler';
+  import AddProductBtn from '$lib/components/product/addProductBtn.svelte';
+  import Products from '$lib/components/product/products.svelte';
+  import ReservedProducts from '$lib/components/product/reservedProducts.svelte';
 
   let productsUnreserved = [];
   let productsReserved = [];
@@ -82,11 +82,7 @@
     </div>
 
     {#if !isLoading && error === null}
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
-        {#each yourReservations as product}
-          <IndividualProductBtn product={product} showDescription={true} />
-        {/each}
-      </div>
+      <Products products={yourReservations}/>
     {/if}
   {/if}
   
@@ -101,11 +97,7 @@
     </div>
 
     {#if $user !== null && !isLoading && error === null}
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
-        {#each productsReserved as product}
-          <IndividualProductBtn product={product} showDescription={false} />
-        {/each}
-      </div>
+      <ReservedProducts products={productsReserved} />
     {/if}
   {/if}
   
@@ -125,11 +117,7 @@
   {:else if error}
     <p class="text-center text-red-600">{error}</p>
   {:else if productsUnreserved.length > 0}
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {#each productsUnreserved as product}
-        <IndividualProductBtn product={product} showDescription={true} />
-      {/each}
-    </div>
+    <Products products={productsUnreserved} />
   {:else}
     <p class="text-center text-gray-600">Geen producten gevonden...</p>
   {/if}

@@ -1,7 +1,6 @@
 <script>
     import { goto } from "$app/navigation";
     export let product;
-    export let showDescription;
 </script>
 
 <button
@@ -16,8 +15,6 @@
     <div class="p-4">
         <h2 class="text-lg font-bold text-green-700 mb-2">{product.title}</h2>
         <p class="text-green-700 font-bold text-base mb-2">${product.price.toFixed(2)}</p>
-        {#if showDescription}
-            <p class="text-gray-700 text-sm truncate">{product.description.slice(0, 100)}...</p>
-        {/if}
+        <p class="text-gray-700 text-sm truncate">{product.description.slice(0, 100)}...</p>
     </div>
 </button>

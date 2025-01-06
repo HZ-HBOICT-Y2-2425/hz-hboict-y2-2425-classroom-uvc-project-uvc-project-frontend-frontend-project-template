@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import { user } from '$lib/store';
-    import { goto } from '$app/navigation';
+  import { goto } from '$app/navigation';
 
   let product = {};
   let seller;
