@@ -2,10 +2,20 @@ export const getData = async (url) => {
     try {
         const response = await fetch(url);
         if (!response.ok) { throw new Error('Gefaald om URL te laden'); }
-        return await response.json();
+        let data = await response.json();
+        return data;
     } catch (error) {
-        console.error('Error bij het laden van producten:', err);
-        error = 'Producten konden niet worden geladen. Probeer het later opnieuw.';
+        console.error('Error bij het laden:', error);
+    }
+}
+
+export const putData = async (url) => {
+    try {
+        const response = await fetch(url, { method: 'PUT'});
+        if (!response.ok) { throw new Error('Gefaald om URL te laden'); }
+        return 'ok';
+    } catch (error) {
+        return error;
     }
 }
 
