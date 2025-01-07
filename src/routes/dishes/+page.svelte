@@ -64,11 +64,39 @@
           return unique;
         }, []);
 
-      // Assign the categories to dropdownContent (store both id and name)
+      // Remove duplicates for Allergies using allergy ID
+      const allAllergies = recipes
+        .flatMap((recipe) => recipe.allergyID || []) // Use allergyID instead of allergens
+        .reduce((unique, allergyID) => {
+          if (!unique.some((allergy) => allergy.id === allergyID.id)) {
+            unique.push(allergyID);
+          }
+          return unique;
+        }, []); // Remove duplicates
+
+      // Remove duplicates for Seasons using season id
+      const allSeasons = recipes
+        .flatMap((recipe) => recipe.season || [])
+        .reduce((unique, season) => {
+          if (!unique.some((uniqueSeason) => uniqueSeason.id === season.id)) {
+            unique.push(season);
+          }
+          return unique;
+        }, []); // Remove duplicates
+
+      console.log("Unique Categories:", allCategories);
+      console.log("Unique Allergies:", allAllergies);
+      console.log("Unique Seasons:", allSeasons);
+
+      // Assign the categories, allergies, and seasons to dropdownContent
       dropdownContent.Categorieën = allCategories.map((category) => ({
         id: category.id,
         name: category.name,
       }));
+
+      // Assign unique allergies and seasons
+      dropdownContent.Allergieën = allAllergies; // All unique allergies
+      dropdownContent.Seizoen = allSeasons; // All unique seasons
     } catch (err) {
       console.error("Error fetching recipes and categories:", err.message);
     }
@@ -86,20 +114,23 @@
       } else {
         selectedFilters[key].push(selectedCategoryId); // Add category ID to selected filters
       }
-
-      // Log the selected filters for debugging
-      console.log(
-        "Selected filters after category selection:",
-        selectedFilters,
-      );
-    } else {
-      // For other filters like Allergieën, Seizoen, etc., handle normally
-      if (selectedFilters[key].includes(item)) {
+    } else if (key === "Allergieën") {
+      // Handle allergy selection
+      if (selectedFilters[key].includes(item.id)) {
         selectedFilters[key] = selectedFilters[key].filter(
-          (filter) => filter !== item,
-        ); // Remove from selected
+          (filter) => filter !== item.id,
+        ); // Remove allergy from selected filters
       } else {
-        selectedFilters[key].push(item); // Add to selected
+        selectedFilters[key].push(item.id); // Add allergy to selected filters
+      }
+    } else if (key === "Seizoen") {
+      // Handle season selection
+      if (selectedFilters[key].includes(item.id)) {
+        selectedFilters[key] = selectedFilters[key].filter(
+          (filter) => filter !== item.id,
+        ); // Remove season from selected filters
+      } else {
+        selectedFilters[key].push(item.id); // Add season to selected filters
       }
     }
 
@@ -127,11 +158,15 @@
       const matchesFilters =
         matchesCategories &&
         (selectedFilters.Allergieën.length === 0 ||
-          selectedFilters.Allergieën.some((allergy) =>
-            recipe.allergens?.includes(allergy),
+          selectedFilters.Allergieën.every((selectedAllergyId) =>
+            recipe.allergyID?.some(
+              (allergy) => allergy.id === selectedAllergyId,
+            ),
           )) &&
         (selectedFilters.Seizoen.length === 0 ||
-          selectedFilters.Seizoen.includes(recipe.season));
+          selectedFilters.Seizoen.every((selectedSeasonId) =>
+            recipe.season?.some((season) => season.id === selectedSeasonId),
+          ));
 
       console.log(
         `Recipe: ${recipe.name}, Category Match: ${matchesCategories}`,
