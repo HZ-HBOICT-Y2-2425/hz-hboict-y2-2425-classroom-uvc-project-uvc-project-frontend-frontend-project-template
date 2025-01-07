@@ -170,33 +170,41 @@
   });
 </script>
 
-<h1 class="text-8xl text-green-600 text-center">Recepten</h1>
+<div class="flex flex-col items-center justify-center text-center mt-12">
+  <p class="text-gray-500 text-lg">Zoek de lekkerste recepten</p>
+  <h1 class="text-4xl md:text-6xl font-bold">
+    <span class="text-black">Recepten</span><span class="text-[#69A571]">.</span
+    >
+  </h1>
+</div>
 
 <!-- Search Bar -->
-<div class="flex items-center max-w-[30%] mx-auto mt-10">
+<div class="flex items-center max-w-[30%] mx-auto mt-8">
   <input
     type="text"
     bind:value={query}
     placeholder="Zoeken..."
-    class="border border-black px-4 py-2 rounded-l w-full focus:border-black focus:outline-none outline-none border-2 border-r-0"
+    class="border-2 border-gray-400 px-4 py-2 rounded-l w-full focus:border-gray-400 focus:outline-none outline-none border-2 border-r-0"
     on:input={filterRecipes}
   />
   <button
     on:click={filterRecipes}
-    class="px-4 py-2 bg-zinc-200 text-black rounded-r border-2 border-black"
+    class="px-4 py-2 bg-zinc-200 text-black rounded-r border-2 border-gray-400"
   >
     Zoeken
   </button>
 </div>
 
 <!-- Dropdown Menus -->
-<div class="grid grid-cols-2 mx-auto justify-center gap-6 max-w-[42%] mt-20">
+<div
+  class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 mx-auto justify-center gap-6 lg:max-w-[40%] max-w-[90%] mt-12 text-center"
+>
   {#each Object.keys(dropdownStates) as key (key)}
     <div class="flex items-center justify-center text-center relative">
       <div class="dropdown">
         <!-- Dropdown Toggle Button -->
         <button
-          class="btn px-4 py-2 border-2 border-black bg-zinc-200 rounded min-w-[8vw]"
+          class="btn px-6 py-3 border-2 border-gray-400 bg-zinc-100 rounded-lg shadow-sm hover:bg-zinc-200 transition-all duration-300 ease-in-out w-full min-w-[150px]"
           on:click={() => toggleDropdown(key)}
         >
           {key}
@@ -205,11 +213,11 @@
         <!-- Dropdown Menu -->
         {#if dropdownStates[key]}
           <ul
-            class="absolute bg-white border border-gray-300 rounded shadow-lg mt-2 w-52 z-10"
+            class="absolute bg-white border border-gray-300 rounded-lg shadow-lg mt-2 w-full min-w-[150px] z-10"
           >
             {#each dropdownContent[key] as item (item)}
               <li
-                class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                class="px-4 py-2 text-gray-700 hover:bg-gray-200 cursor-pointer transition-all duration-300 ease-in-out"
                 on:click={() => selectFilter(key, item)}
               >
                 {item.name}
