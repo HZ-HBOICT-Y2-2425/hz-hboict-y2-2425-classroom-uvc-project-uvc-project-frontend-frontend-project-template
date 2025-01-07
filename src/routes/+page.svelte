@@ -31,26 +31,38 @@
   let error = null;
   let userID;
 
+  async function getDataUrls(urls) {
+    return await Promise.all(
+      urls.map(async (url) => {
+        return await getData(`http://localhost:3010/${url}`)
+      })
+    );
+  }
+
+  const getData = async (url) => {
+    try {
+        const res = await fetch(url);
+        if (!res.ok) { throw new Error('Gefaald om URL te laden'); }
+        let data = await res.json();
+        return data;
+    } catch (error) {
+        console.error('Error bij het laden:', error);
+    }
+  }
+
   // Haal de producten op van de API die specifiek door deze gebruiker zijn toegevoegd
   onMount(() => {
     setTimeout(async () => {
-      try {
-        // Stel de userID in met een kleine vertraging
-        userID = $user?.id || 1; // Gebruik een fallback van 1 als de userID niet beschikbaar is
-        console.log('Gebruiker ID:', userID);
+      
+    userID = $user?.id || 1; // Gebruik een fallback van 1 als de userID niet beschikbaar is
+    console.log('Gebruiker ID:', userID);
 
-        const response = await fetch(`http://localhost:3010/products/user/${userID}`);
-        
-        if (!response.ok) {
-          throw new Error('Kon producten niet laden.');
-        }
+    const productsUrls = await getData(`http://localhost:3010/products/user/${userID}`)
 
-        products = await response.json();
-        console.log("Producten van gebruiker:", products); 
-      } catch (err) {
-        console.error('Fout bij het laden van producten:', err);
-        error = 'Kon jouw producten niet ophalen. Probeer het later opnieuw.';
-      }
+    products = await getDataUrls(productsUrls);
+
+    console.log("Producten van gebruiker:", products); 
+      
     }, 100); // 100 milliseconden vertraging
   });
 

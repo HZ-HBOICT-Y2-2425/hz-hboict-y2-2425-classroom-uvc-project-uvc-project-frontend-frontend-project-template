@@ -50,7 +50,7 @@
         tasteRating: tasteRating
       }).toString();
 
-      const response = await fetch(`http://localhost:3016/create?${queryParams}`, {
+      const response = await fetch(`http://localhost:3010/reviews/create?${queryParams}`, {
         method: 'POST',
       });
 
