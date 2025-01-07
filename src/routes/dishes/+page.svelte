@@ -38,11 +38,16 @@
       if (!recipesResponse.ok) throw new Error("Failed to fetch data");
       recipes = await recipesResponse.json();
       filteredRecipes = recipes; // Initially show all recipes
+
+      // Log the categories of each recipe
+      recipes.forEach((recipe) => {
+        console.log(`Recipe: ${recipe.name}, Category:`, recipe.category);
+      });
     } catch (err) {
       error = err.message;
     }
 
-    // Fetch the dropdown options
+    // Fetch the dropdown options (categories, allergies, season)
     try {
       const recipesResponse = await fetch("http://localhost:3010/recipes/");
       if (!recipesResponse.ok) throw new Error("Failed to fetch recipes");
@@ -51,10 +56,7 @@
 
       // Check if `category` exists and process it
       const allCategories = recipes
-        .flatMap((recipe) => {
-          // console.log(`Category for Recipe ID ${recipe.id}:`, recipe.category);
-          return recipe.category || [];
-        })
+        .flatMap((recipe) => recipe.category || [])
         .reduce((unique, category) => {
           if (!unique.some((item) => item.id === category.id)) {
             unique.push(category);
@@ -62,34 +64,68 @@
           return unique;
         }, []);
 
-      // Assign the unique categories to dropdownContent
-      dropdownContent.Categorieën = allCategories.map(
-        (category) => category.name,
-      );
-
-      // Display categories on the screen
-      const categoryContainer = document.getElementById("category-container");
-      if (categoryContainer) {
-        categoryContainer.innerHTML = allCategories
-          .map((category) => `<div class="category">${category.name}</div>`)
-          .join("");
-      }
+      // Assign the categories to dropdownContent (store both id and name)
+      dropdownContent.Categorieën = allCategories.map((category) => ({
+        id: category.id,
+        name: category.name,
+      }));
     } catch (err) {
       console.error("Error fetching recipes and categories:", err.message);
     }
   }
 
-  // Watch for changes in filters and search query
+  // Handle selecting an option in a dropdown
+  function selectFilter(key, item) {
+    if (key === "Categorieën") {
+      // Handle category selection by storing category ID
+      const selectedCategoryId = item.id;
+      if (selectedFilters[key].includes(selectedCategoryId)) {
+        selectedFilters[key] = selectedFilters[key].filter(
+          (filter) => filter !== selectedCategoryId,
+        ); // Remove the category ID from selected filters
+      } else {
+        selectedFilters[key].push(selectedCategoryId); // Add category ID to selected filters
+      }
+
+      // Log the selected filters for debugging
+      console.log(
+        "Selected filters after category selection:",
+        selectedFilters,
+      );
+    } else {
+      // For other filters like Allergieën, Seizoen, etc., handle normally
+      if (selectedFilters[key].includes(item)) {
+        selectedFilters[key] = selectedFilters[key].filter(
+          (filter) => filter !== item,
+        ); // Remove from selected
+      } else {
+        selectedFilters[key].push(item); // Add to selected
+      }
+    }
+
+    // After selecting or unselecting a filter, update the filtered recipes
+    filterRecipes();
+  }
+
   function filterRecipes() {
+    console.log("Filtering recipes with selected filters:", selectedFilters); // Log selected filters
+
     filteredRecipes = recipes.filter((recipe) => {
       const matchesQuery =
         !query ||
         recipe.name.toLowerCase().includes(query.toLowerCase()) ||
         recipe.description?.toLowerCase().includes(query.toLowerCase());
 
+      const matchesCategories =
+        selectedFilters.Categorieën.length === 0 ||
+        selectedFilters.Categorieën.every((selectedCategoryId) =>
+          recipe.category.some(
+            (category) => category.id === selectedCategoryId,
+          ),
+        );
+
       const matchesFilters =
-        (selectedFilters.Categorieën.length === 0 ||
-          selectedFilters.Categorieën.includes(recipe.category)) &&
+        matchesCategories &&
         (selectedFilters.Allergieën.length === 0 ||
           selectedFilters.Allergieën.some((allergy) =>
             recipe.allergens?.includes(allergy),
@@ -97,8 +133,13 @@
         (selectedFilters.Seizoen.length === 0 ||
           selectedFilters.Seizoen.includes(recipe.season));
 
+      console.log(
+        `Recipe: ${recipe.name}, Category Match: ${matchesCategories}`,
+      ); // Log category match
       return matchesQuery && matchesFilters;
     });
+
+    console.log("Filtered recipes:", filteredRecipes); // Log the filtered recipes
   }
 
   // Function to toggle a specific dropdown
@@ -110,19 +151,6 @@
       }
     }
     dropdownStates[key] = !dropdownStates[key]; // Toggle the clicked dropdown
-  }
-
-  // Handle selecting an option in a dropdown
-  function selectFilter(key, item) {
-    if (selectedFilters[key].includes(item)) {
-      selectedFilters[key] = selectedFilters[key].filter(
-        (filter) => filter !== item,
-      ); // Remove from selected
-    } else {
-      selectedFilters[key].push(item); // Add to selected
-    }
-
-    filterRecipes();
   }
 
   // Close all dropdowns when clicking outside
@@ -184,7 +212,8 @@
                 class="px-4 py-2 hover:bg-gray-200 cursor-pointer"
                 on:click={() => selectFilter(key, item)}
               >
-                {item}
+                {item.name}
+                <!-- Display category name -->
               </li>
             {/each}
           </ul>
