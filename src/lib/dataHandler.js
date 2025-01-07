@@ -13,9 +13,8 @@ export const putData = async (url) => {
     try {
         const response = await fetch(url, { method: 'PUT'});
         if (!response.ok) { throw new Error('Gefaald om URL te laden'); }
-        return 'ok';
     } catch (error) {
-        return error;
+        console.error('Error bij het laden:', error);
     }
 }
 

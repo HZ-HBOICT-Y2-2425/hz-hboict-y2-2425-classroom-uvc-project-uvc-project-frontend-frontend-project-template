@@ -3,6 +3,7 @@
   import { page } from '$app/stores';
   import { user } from '$lib/store';
   import { goto } from '$app/navigation';
+  import { getData, putData } from '$lib/dataHandler';
 
   let product = {};
   let seller;
@@ -32,8 +33,7 @@
 
   async function fetchLocationFromPostcode(postcode) {
     const data = await getData(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(postcode)}&countrycodes=NL`,
-      'Geen locatie gevonden voor de opgegeven postcode.'
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(postcode)}&countrycodes=NL`
     );
 
     if (data.length > 0) {
@@ -67,21 +67,10 @@
     });
   }
 
-  async function getData(url, callMethod, errMessage) {
-    try {
-      const res = await fetch(url, {method: callMethod});
-      if (!res.ok) throw new Error(errMessage);
-      let data = await res.json();
-      return data;
-    } catch (err) {
-      console.error('Fout bij het laden van product of gebruiker:', err);
-    }
-  }
-
   onMount(async () => {
     productId = $page.params.id; // Haal de product id uit de URL
-    product = await getData(`http://localhost:3010/products/product/${productId}`, 'GET', 'Gefaald om product te laden');
-    seller = await getData(`http://localhost:3010/user/${product.userID}`, 'GET', 'Fout bij het ophalen van gebruikersinformatie');
+    product = await getData(`http://localhost:3010/products/product/${productId}`);
+    seller = await getData(`http://localhost:3010/user/${product.userID}`);
 
     if (seller.zipcode) {
       try {
@@ -128,12 +117,12 @@
   });
 
   async function reserve() {
-    await getData(`http://localhost:3010/products/reserve/${product.id}/${product.userID}/${$user.id}`, 'PUT', 'Fout bij het reserveren van het product');
+    await putData(`http://localhost:3010/products/reserve/${product.id}/${product.userID}/${$user.id}`);
     window.location.reload();
   }
 
   async function unreserve() {
-    await getData(`http://localhost:3010/products/unreserve/${product.id}/${product.userID}`, 'PUT', 'Fout bij het annueleren van de reservatie');
+    await putData(`http://localhost:3010/products/unreserve/${product.id}/${product.userID}`);
     window.location.reload();
   }
 </script>
@@ -175,10 +164,18 @@
       </p>
     {:else if !userIsSeller}
       {#if product.reserved}
-        <button 
-          on:click={() => unreserve()} 
-          class="w-full px-4 py-2 mt-3 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
-        >Annuleer reservatie</button>
+        {#if $user.id === product.reservedByUserID}
+          <button 
+            on:click={() => unreserve()} 
+            class="w-full px-4 py-2 mt-3 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+          >Annuleer reservatie</button>
+        {:else}
+        <p 
+          class="w-full px-4 py-2 mt-3 bg-gray-500 text-white text-center font-semibold rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
+        >
+          Product is al gereserveerd
+        </p>
+        {/if}
       {:else}
         <button 
           on:click={() => reserve()} 
