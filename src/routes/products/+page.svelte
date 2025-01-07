@@ -1,6 +1,8 @@
 <script>
   import { onMount } from 'svelte';
-  import { goto } from '$app/navigation'; // Importeren van goto om naar een andere pagina te navigeren
+  import { getData, getDataUrls } from '$lib/dataHandler';
+  import AddProductBtn from '$lib/components/product/addProductBtn.svelte';
+  import IndividualProductBtn from '$lib/components/product/individualProductBtn.svelte';
 
   let products = [];
   let isLoading = true;
@@ -11,42 +13,19 @@
     const urlParams = new URLSearchParams(window.location.search);
     searchQuery = urlParams.get('search') || '';  // Haal de zoekquery uit de URL
 
-    try {
-      // Laad de URLs van alle producten
-      const response = await fetch("http://localhost:3010/products");
-      if (!response.ok) {
-        throw new Error("Gefaald om product URLs te laden");
-      }
+    const productUrls = await getData('http://localhost:3010/products');
 
-      const productUrls = await response.json();
-
-      // Laad de product details van alle producten
-      const productDetails = await Promise.all(
-        productUrls.map(async (url) => {
-          const productResponse = await fetch(`http://localhost:3010/${url}`);
-          if (!productResponse.ok) {
-            throw new Error(`Gefaald om producten te laden van: ${url}`);
-          }
-          return await productResponse.json();
-        }),
-      );
-
-      // Filter producten op basis van de zoekquery
-      products = productDetails.filter(product =>
-        product.title.toLowerCase().includes(searchQuery.toLowerCase())  // Zoek naar producten die de zoekterm bevatten
-      );
-    } catch (err) {
-      console.error("Error bij het laden van producten:", err);
-      error =
-        "Producten konden niet worden geladen. Probeer het later opnieuw.";
-    } finally {
-      isLoading = false;
-    }
+    // Laad de product details van alle producten
+    const productDetails = await getDataUrls(productUrls);
+    
+    // Filter producten op basis van de zoekquery
+    products = productDetails.filter(product => 
+      !product.reserved && // Toon alleen producten die niet gereserveerd zijn
+      product.title.toLowerCase().includes(searchQuery.toLowerCase()) // Zoek naar producten die de zoekterm bevatten
+    );
+  
+    isLoading = false;
   });
-
-  function navigateToAddProduct() {
-    goto('products/add-product');
-  }
 </script>
 
 <div class="container mx-auto p-4">
@@ -54,14 +33,7 @@
     <h1 class="text-2xl font-bold text-green-600">
       Producten
     </h1>
-
-    <button
-      class="text-white px-4 py-2 rounded shadow hover:bg-green-600 transition"
-      style="background-color: rgb(100, 173, 108);"
-      on:click={navigateToAddProduct}
-    >
-      + Product toevoegen
-    </button>
+    <AddProductBtn />
   </div>
 
   {#if isLoading}
@@ -71,21 +43,7 @@
   {:else if products.length > 0}
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {#each products as product (product.id)}
-        <button
-          class="border-2 border-gray-300 rounded-lg overflow-hidden bg-gray-100 transition-transform transform hover:translate-y-[-5px] hover:shadow-lg cursor-pointer text-left"
-          on:click={() => goto(`/products/${product.id}`)}
-        >
-          <img
-            src="https://via.placeholder.com/400x200"
-            alt="{product.title}"
-            class="w-full h-48 object-cover"
-          />
-          <div class="p-4">
-            <h2 class="text-lg font-bold text-green-700 mb-2">{product.title}</h2>
-            <p class="text-green-700 font-bold text-base mb-2">${product.price.toFixed(2)}</p>
-            <p class="text-gray-700 text-sm truncate">{product.description.slice(0, 100)}...</p>
-          </div>
-        </button>
+        <IndividualProductBtn {product} />
       {/each}
     </div>
   {:else}
