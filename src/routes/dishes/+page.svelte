@@ -44,26 +44,60 @@
 
     // Fetch the dropdown options
     try {
-      const consumablesResponse = await fetch(
-        "http://localhost:3015/consumables",
+      const recipesResponse = await fetch("http://localhost:3010/recipes/");
+      if (!recipesResponse.ok) throw new Error("Failed to fetch recipes");
+
+      const recipes = await recipesResponse.json();
+
+      // Check if `category` exists and process it
+      const allCategories = recipes
+        .flatMap((recipe) => {
+          // console.log(`Category for Recipe ID ${recipe.id}:`, recipe.category);
+          return recipe.category || [];
+        })
+        .reduce((unique, category) => {
+          if (!unique.some((item) => item.id === category.id)) {
+            unique.push(category);
+          }
+          return unique;
+        }, []);
+
+      // Assign the unique categories to dropdownContent
+      dropdownContent.Categorieën = allCategories.map(
+        (category) => category.name,
       );
-      if (!consumablesResponse.ok)
-        throw new Error("Failed to fetch consumables");
-      const consumables = await consumablesResponse.json();
-      dropdownContent.Categorieën = consumables.map((item) => item.name);
+
+      // Display categories on the screen
+      const categoryContainer = document.getElementById("category-container");
+      if (categoryContainer) {
+        categoryContainer.innerHTML = allCategories
+          .map((category) => `<div class="category">${category.name}</div>`)
+          .join("");
+      }
     } catch (err) {
-      console.error("Error fetching consumables:", err.message);
+      console.error("Error fetching recipes and categories:", err.message);
     }
   }
 
   // Watch for changes in filters and search query
   function filterRecipes() {
-    console.log(selectedFilters);
     filteredRecipes = recipes.filter((recipe) => {
-      return (
-        selectedFilters.Categorieën.length === 0 ||
-        selectedFilters.Categorieën.includes(recipe.category)
-      );
+      const matchesQuery =
+        !query ||
+        recipe.name.toLowerCase().includes(query.toLowerCase()) ||
+        recipe.description?.toLowerCase().includes(query.toLowerCase());
+
+      const matchesFilters =
+        (selectedFilters.Categorieën.length === 0 ||
+          selectedFilters.Categorieën.includes(recipe.category)) &&
+        (selectedFilters.Allergieën.length === 0 ||
+          selectedFilters.Allergieën.some((allergy) =>
+            recipe.allergens?.includes(allergy),
+          )) &&
+        (selectedFilters.Seizoen.length === 0 ||
+          selectedFilters.Seizoen.includes(recipe.season));
+
+      return matchesQuery && matchesFilters;
     });
   }
 
