@@ -1,10 +1,9 @@
 <script>
   import { onMount } from 'svelte';
   import { user } from '$lib/store';
-  import { getData, getDataUrls } from '$lib/dataHandler';
+  import { getData, getDataUrls, putData } from '$lib/dataHandler';
   import AddProductBtn from '$lib/components/product/addProductBtn.svelte';
-  import Products from '$lib/components/product/products.svelte';
-  import ReservedProducts from '$lib/components/product/reservedProducts.svelte';
+  import IndividualProductBtn from '$lib/components/product/individualProductBtn.svelte';
 
   let products = {
     unreserved: [],
@@ -43,6 +42,16 @@
       isLoading = false;
     }
   }, 100));
+
+  async function removeReservation(product) {
+    await putData(`http://localhost:3010/products/unreserve/${product.id}/${product.userID}`);
+    window.location.reload();
+  }
+
+  async function approveReservation() {
+    // TODO vraag wat hier gedaan moet worden met het product
+    window.location.reload();
+  }
 </script>
 
 <div class="container mx-auto p-4">
@@ -55,7 +64,19 @@
     </div>
 
     {#if !isLoading && error === null}
-      <Products products={products.yourReservations}/>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+        {#each products.yourReservations as product}
+        <div class="grid border border-black rounded-lg gap-4 p-1">
+          <IndividualProductBtn product={product} />
+          <button 
+            on:click={() => removeReservation(product)} 
+            class="bg-red-500 rounded-lg transition-transform transform hover:translate-y-[-2px] hover:shadow-lg cursor-pointer text-center text-white font-bold p-1"
+          >
+            Reservatie Verwijderen
+          </button>
+        </div>
+        {/each}
+      </div>
     {/if}
   {/if}
   
@@ -70,7 +91,27 @@
     </div>
 
     {#if $user !== null && !isLoading && error === null}
-      <ReservedProducts products={products.reserved} />
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+      {#each products.reserved as product}
+        <div class="grid border border-black rounded-lg gap-4 p-1">
+          <IndividualProductBtn product={product} />
+          <div class="grid grid-cols-2 gap-4">
+            <button 
+              on:click={() => approveReservation()} 
+              class="bg-green-500 rounded-lg transition-transform transform hover:translate-y-[-2px] hover:shadow-lg cursor-pointer text-center text-white font-bold p-1"
+            >
+              Product is Opgehaald
+            </button>
+            <button 
+              on:click={() => removeReservation(product)} 
+              class="bg-red-500 rounded-lg transition-transform transform hover:translate-y-[-2px] hover:shadow-lg cursor-pointer text-center text-white font-bold p-1"
+            >
+              Reservatie Verwijderen
+            </button>
+          </div>
+        </div>
+      {/each}
+  </div>
     {/if}
   {/if}
   
@@ -90,7 +131,11 @@
   {:else if error}
     <p class="text-center text-red-600">{error}</p>
   {:else if products.unreserved.length > 0}
-    <Products products={products.unreserved} />
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+    {#each products.unreserved as product}
+      <IndividualProductBtn product={product} />
+    {/each}
+  </div>
   {:else}
     <p class="text-center text-gray-600">Geen producten gevonden...</p>
   {/if}
