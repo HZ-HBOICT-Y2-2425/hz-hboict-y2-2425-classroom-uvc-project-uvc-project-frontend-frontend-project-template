@@ -13,9 +13,9 @@
 
     try {
       // Laad de URLs van alle producten
-      const response = await fetch('http://localhost:3010/products');
+      const response = await fetch("http://localhost:3010/products");
       if (!response.ok) {
-        throw new Error('Gefaald om product URLs te laden');
+        throw new Error("Gefaald om product URLs te laden");
       }
 
       const productUrls = await response.json();
@@ -28,7 +28,7 @@
             throw new Error(`Gefaald om producten te laden van: ${url}`);
           }
           return await productResponse.json();
-        })
+        }),
       );
 
       // Filter producten op basis van de zoekquery
@@ -36,8 +36,9 @@
         product.title.toLowerCase().includes(searchQuery.toLowerCase())  // Zoek naar producten die de zoekterm bevatten
       );
     } catch (err) {
-      console.error('Error bij het laden van producten:', err);
-      error = 'Producten konden niet worden geladen. Probeer het later opnieuw.';
+      console.error("Error bij het laden van producten:", err);
+      error =
+        "Producten konden niet worden geladen. Probeer het later opnieuw.";
     } finally {
       isLoading = false;
     }
