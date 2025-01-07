@@ -4,6 +4,8 @@
   import { getData, getDataUrls, putData } from '$lib/dataHandler';
   import AddProductBtn from '$lib/components/product/addProductBtn.svelte';
   import IndividualProductBtn from '$lib/components/product/individualProductBtn.svelte';
+    import RemoveReservationBtn from '$lib/components/product/removeReservationBtn.svelte';
+    import AcceptReservationBtn from '$lib/components/product/acceptReservationBtn.svelte';
 
   let products = {
     unreserved: [],
@@ -42,16 +44,6 @@
       isLoading = false;
     }
   }, 100));
-
-  async function removeReservation(product) {
-    await putData(`http://localhost:3010/products/unreserve/${product.id}/${product.userID}`);
-    window.location.reload();
-  }
-
-  async function approveReservation() {
-    // TODO vraag wat hier gedaan moet worden met het product
-    window.location.reload();
-  }
 </script>
 
 <div class="container mx-auto p-4">
@@ -68,12 +60,7 @@
         {#each products.yourReservations as product}
         <div class="grid border border-black rounded-lg gap-4 p-1">
           <IndividualProductBtn product={product} />
-          <button 
-            on:click={() => removeReservation(product)} 
-            class="bg-red-500 rounded-lg transition-transform transform hover:translate-y-[-2px] hover:shadow-lg cursor-pointer text-center text-white font-bold p-1"
-          >
-            Reservatie Verwijderen
-          </button>
+          <RemoveReservationBtn product={product} />
         </div>
         {/each}
       </div>
@@ -96,18 +83,8 @@
         <div class="grid border border-black rounded-lg gap-4 p-1">
           <IndividualProductBtn product={product} />
           <div class="grid grid-cols-2 gap-4">
-            <button 
-              on:click={() => approveReservation()} 
-              class="bg-green-500 rounded-lg transition-transform transform hover:translate-y-[-2px] hover:shadow-lg cursor-pointer text-center text-white font-bold p-1"
-            >
-              Product is Opgehaald
-            </button>
-            <button 
-              on:click={() => removeReservation(product)} 
-              class="bg-red-500 rounded-lg transition-transform transform hover:translate-y-[-2px] hover:shadow-lg cursor-pointer text-center text-white font-bold p-1"
-            >
-              Reservatie Verwijderen
-            </button>
+            <AcceptReservationBtn product={product} />
+            <RemoveReservationBtn product={product} />
           </div>
         </div>
       {/each}
