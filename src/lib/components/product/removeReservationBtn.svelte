@@ -1,6 +1,8 @@
 <script>
+    import { putData } from "$lib/dataHandler";
+
     export let product;
-    
+
     async function removeReservation(product) {
         await putData(`http://localhost:3010/products/unreserve/${product.id}/${product.userID}`);
         window.location.reload();

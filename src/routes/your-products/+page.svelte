@@ -4,8 +4,8 @@
   import { getData, getDataUrls, putData } from '$lib/dataHandler';
   import AddProductBtn from '$lib/components/product/addProductBtn.svelte';
   import IndividualProductBtn from '$lib/components/product/individualProductBtn.svelte';
-    import RemoveReservationBtn from '$lib/components/product/removeReservationBtn.svelte';
-    import AcceptReservationBtn from '$lib/components/product/acceptReservationBtn.svelte';
+  import RemoveReservationBtn from '$lib/components/product/removeReservationBtn.svelte';
+  import AcceptReservationBtn from '$lib/components/product/acceptReservationBtn.svelte';
 
   let products = {
     unreserved: [],
