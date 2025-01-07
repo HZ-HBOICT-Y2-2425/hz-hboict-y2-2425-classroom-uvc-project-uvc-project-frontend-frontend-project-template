@@ -104,7 +104,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
           {#each products as product}
             <div class="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
-              <img src={product.image || 'https://via.placeholder.com/300'} alt={product.title} class="h-60 w-full object-cover" />
+              <img src={product.image || 'https://via.placeholder.com/300'} class="h-60 w-full object-cover" />
               <div class="p-4">
                 <h3 class="text-lg font-bold text-gray-800">{product.title}</h3>
                 <p class="text-gray-600 text-sm">{product.description}</p>

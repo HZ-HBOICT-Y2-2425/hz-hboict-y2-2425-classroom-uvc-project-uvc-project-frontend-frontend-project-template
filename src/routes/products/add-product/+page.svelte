@@ -14,6 +14,7 @@
     let allergiesList = [];
     let showDropdown = false; // Voor het tonen van de allergieën dropdown
     let showPopup = false; // Popup na succesvolle toevoeging
+    let image = null; // Voor het opslaan van de geüploade afbeelding
 
     let errors = {
         title: false,
@@ -90,6 +91,11 @@
                 formData.append(key, productData[key]);
             });
 
+            // Voeg afbeelding toe als deze is geselecteerd
+            if (image) {
+                formData.append("image", image);
+            }
+
             // Verstuur de POST-aanroep met de form-data
             const res = await fetch("http://localhost:3010/products/create", {
                 method: "POST",
@@ -109,7 +115,6 @@
         }
     }
 
-
     // Toggle voor het toevoegen/verwijderen van allergieën
     function toggleAllergy(allergyId) {
         if (selectedAllergies.includes(allergyId)) {
@@ -117,6 +122,11 @@
         } else {
             selectedAllergies.push(allergyId);
         }
+    }
+
+    // Verwerken van bestand bij bestandselectie
+    function handleFileChange(event) {
+        image = event.target.files[0]; // Sla het bestand op
     }
 </script>
 
@@ -227,6 +237,19 @@
                 required
             ></textarea>
         </div>
+
+        <!-- Afbeelding Uploaden (optioneel) -->
+        <div>
+            <label for="image" class="block mb-1 font-medium">Afbeelding (optioneel):</label>
+            <input
+                type="file"
+                id="image"
+                accept="image/*"
+                on:change={handleFileChange}
+                class="border p-2 w-full"
+            />
+        </div>
+
         <button class="bg-blue-500 text-white p-2 rounded mt-4 w-full md:w-auto">Toevoegen</button>
     </form>
 
