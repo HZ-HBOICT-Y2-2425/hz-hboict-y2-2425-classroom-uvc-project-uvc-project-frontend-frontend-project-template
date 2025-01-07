@@ -214,7 +214,7 @@
 </div>
 
 <!-- Search Bar -->
-<div class="flex items-center max-w-[30%] mx-auto mt-8">
+<div class="flex items-center max-w-[50%] md:max-w-[30%] mx-auto mt-8">
   <input
     type="text"
     bind:value={query}
@@ -232,14 +232,14 @@
 
 <!-- Dropdown Menus -->
 <div
-  class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 mx-auto justify-center gap-6 lg:max-w-[40%] max-w-[90%] mt-12 text-center"
+  class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:max-w-[60%] max-w-[90%] mt-12 mx-auto"
 >
   {#each Object.keys(dropdownStates) as key (key)}
-    <div class="flex items-center justify-center text-center relative">
+    <div class="flex items-center justify-center relative">
       <div class="dropdown">
         <!-- Dropdown Toggle Button -->
         <button
-          class="btn px-6 py-3 border-2 border-gray-400 bg-zinc-100 rounded-lg shadow-sm hover:bg-zinc-200 transition-all duration-300 ease-in-out w-full min-w-[150px]"
+          class="btn px-6 py-3 border-2 border-gray-400 bg-zinc-100 rounded-lg shadow-sm hover:bg-zinc-200 transition-all duration-300 ease-in-out w-full"
           on:click={() => toggleDropdown(key)}
         >
           {key}
@@ -256,7 +256,6 @@
                 on:click={() => selectFilter(key, item)}
               >
                 {item.name}
-                <!-- Display category name -->
               </li>
             {/each}
           </ul>
@@ -265,9 +264,10 @@
     </div>
   {/each}
 </div>
-
 <!-- Recipes Section -->
-<div class="grid grid-cols-4 gap-4 mx-auto justify-center max-w-[90%] mt-20">
+<div
+  class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mx-auto justify-center max-w-[90%] mt-20"
+>
   {#if error}
     <p class="text-red-600">{error}</p>
   {:else if filteredRecipes.length === 0}
