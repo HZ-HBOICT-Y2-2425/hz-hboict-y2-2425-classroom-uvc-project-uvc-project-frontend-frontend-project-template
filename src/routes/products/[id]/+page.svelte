@@ -3,7 +3,7 @@
   import { page } from '$app/stores';
   import { user } from '$lib/store';
   import { goto } from '$app/navigation';
-  import { getData, putData, reserve, unreserve } from '$lib/dataHandler';
+  import { getData, reserve, unreserve } from '$lib/dataHandler';
 
   let product = {};
   let seller;
