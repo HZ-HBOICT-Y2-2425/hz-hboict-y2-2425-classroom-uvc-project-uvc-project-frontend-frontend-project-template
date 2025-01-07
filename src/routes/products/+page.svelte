@@ -70,9 +70,9 @@
   {:else if products.length > 0}
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {#each products as product (product.id)}
-        <div
-          class="border-2 border-gray-300 rounded-lg overflow-hidden bg-gray-100 transition-transform transform hover:translate-y-[-5px] hover:shadow-lg cursor-pointer"
-          on:click={() => window.location.href = `/products/${product.id}`}
+        <button
+          class="border-2 border-gray-300 rounded-lg overflow-hidden bg-gray-100 transition-transform transform hover:translate-y-[-5px] hover:shadow-lg cursor-pointer text-left"
+          on:click={() => goto(`/products/${product.id}`)}
         >
           <img
             src="https://via.placeholder.com/400x200"
@@ -84,7 +84,7 @@
             <p class="text-green-700 font-bold text-base mb-2">${product.price.toFixed(2)}</p>
             <p class="text-gray-700 text-sm truncate">{product.description.slice(0, 100)}...</p>
           </div>
-        </div>
+        </button>
       {/each}
     </div>
   {:else}
