@@ -31,31 +31,44 @@
   let error = null;
   let userID;
 
+  async function getDataUrls(urls) {
+    return await Promise.all(
+      urls.map(async (url) => {
+        return await getData(`http://localhost:3010/${url}`)
+      })
+    );
+  }
+
+  const getData = async (url) => {
+    try {
+        const res = await fetch(url);
+        if (!res.ok) { throw new Error('Gefaald om URL te laden'); }
+        let data = await res.json();
+        return data;
+    } catch (error) {
+        console.error('Error bij het laden:', error);
+    }
+  }
+
   // Haal de producten op van de API die specifiek door deze gebruiker zijn toegevoegd
   onMount(() => {
     setTimeout(async () => {
-      try {
-        // Stel de userID in met een kleine vertraging
-        userID = $user?.id || 1; // Gebruik een fallback van 1 als de userID niet beschikbaar is
-        console.log('Gebruiker ID:', userID);
+      
+    userID = $user?.id || 1; // Gebruik een fallback van 1 als de userID niet beschikbaar is
+    console.log('Gebruiker ID:', userID);
 
-        const response = await fetch(`http://localhost:3013/user/${userID}`);
-        if (!response.ok) {
-          throw new Error('Kon producten niet laden.');
-        }
+    const productsUrls = await getData(`http://localhost:3010/products/user/${userID}`)
 
-        products = await response.json();
-        console.log("Producten van gebruiker:", products); 
-      } catch (err) {
-        console.error('Fout bij het laden van producten:', err);
-        error = 'Kon jouw producten niet ophalen. Probeer het later opnieuw.';
-      }
+    products = await getDataUrls(productsUrls);
+
+    console.log("Producten van gebruiker:", products); 
+      
     }, 100); // 100 milliseconden vertraging
   });
 
-  // Navigeer naar de product detailpagina met dynamisch productID
+  // Navigeer naar de product detailpagina 
   const viewProductDetails = (productId) => {
-    goto(`/products/${productId}`);  // Navigeer naar de detailpagina met het productID
+    goto(`/products/${productId}`);  
   };
 </script>
 
@@ -93,42 +106,42 @@
   </section>
 
   <!-- Producten van de gebruiker Section -->
-<section class="px-4 md:px-16">
-  <h2 class="text-3xl font-bold text-left mb-6">Jouw toegevoegde producten</h2>
-  {#if error}
-    <p class="text-red-600">{error}</p>
-  {:else if products.length > 0}
-    <!-- Scrollbare container -->
-    <div class="overflow-y-auto max-h-[600px] border border-gray-300 rounded-lg shadow-lg">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
-        {#each products as product}
-          <div class="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
-            <img src={product.image || 'https://via.placeholder.com/300'} alt={product.title} class="h-60 w-full object-cover" />
-            <div class="p-4">
-              <h3 class="text-lg font-bold text-gray-800">{product.title}</h3>
-              <p class="text-gray-600 text-sm">{product.description}</p>
-              <p class="text-gray-700 font-semibold">Prijs: €{product.price}</p>
-              <p class="text-gray-500 text-sm">Aantal: {product.amount} {product.unit}</p>
-              <p class="text-gray-500 text-sm">CO2-bijdrage: {product.co2Contribution} kg</p>
-              <p class="text-gray-500 text-sm">Vervaldatum: {new Date(product.expirationDate).toLocaleDateString()}</p>
-              {#if product.reserved}
-                <p class="text-red-500 text-sm">Gereserveerd door gebruiker {product.reservedByUserID}</p>
-              {/if}
-              <button
-                class="mt-4 bg-[#69A571] text-white px-4 py-2 rounded-md"
-                on:click={() => viewProductDetails(product.id)}
-              >
-                Bekijk details
-              </button>
+  <section class="px-4 md:px-16">
+    <h2 class="text-3xl font-bold text-left mb-6">Jouw toegevoegde producten</h2>
+    {#if error}
+      <p class="text-red-600">{error}</p>
+    {:else if products.length > 0}
+      <!-- Scrollbare container -->
+      <div class="overflow-y-auto max-h-[600px] border border-gray-300 rounded-lg shadow-lg">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+          {#each products as product}
+            <div class="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+              <img src={product.image || 'https://via.placeholder.com/300'} class="h-60 w-full object-cover" />
+              <div class="p-4">
+                <h3 class="text-lg font-bold text-gray-800">{product.title}</h3>
+                <p class="text-gray-600 text-sm">{product.description}</p>
+                <p class="text-gray-700 font-semibold">Prijs: €{product.price}</p>
+                <p class="text-gray-500 text-sm">Aantal: {product.amount} {product.unit}</p>
+                <p class="text-gray-500 text-sm">CO2-bijdrage: {product.co2Contribution} kg</p>
+                <p class="text-gray-500 text-sm">Vervaldatum: {new Date(product.expirationDate).toLocaleDateString()}</p>
+                {#if product.reserved}
+                  <p class="text-red-500 text-sm">Gereserveerd door gebruiker {product.reservedByUserID}</p>
+                {/if}
+                <button
+                  class="mt-4 bg-[#69A571] text-white px-4 py-2 rounded-md"
+                  on:click={() => viewProductDetails(product.id)}
+                >
+                  Bekijk details
+                </button>
+              </div>
             </div>
-          </div>
-        {/each}
+          {/each}
+        </div>
       </div>
-    </div>
-  {:else}
-    <p class="text-gray-600">Je hebt nog geen producten toegevoegd. Begin met het toevoegen van producten om te verkopen of delen!</p>
-  {/if}
-</section>
+    {:else}
+      <p class="text-gray-600">Je hebt nog geen producten toegevoegd. Begin met het toevoegen van producten om te verkopen of delen!</p>
+    {/if}
+  </section>
 
   <!-- About Section -->
   <section class="flex flex-col md:flex-row items-center gap-12 px-4 md:px-16 py-16 bg-gray-100">
