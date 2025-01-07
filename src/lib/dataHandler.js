@@ -25,3 +25,13 @@ export const getDataUrls = async (urls) => {
         })
     );
 }
+
+export async function reserve(product, user) {
+    await putData(`http://localhost:3010/products/reserve/${product.id}/${product.userID}/${user.id}`);
+    window.location.reload();
+}
+
+export async function unreserve(product) {
+    await putData(`http://localhost:3010/products/unreserve/${product.id}/${product.userID}`);
+    window.location.reload();
+}

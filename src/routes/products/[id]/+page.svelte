@@ -3,7 +3,7 @@
   import { page } from '$app/stores';
   import { user } from '$lib/store';
   import { goto } from '$app/navigation';
-  import { getData, putData } from '$lib/dataHandler';
+  import { getData, putData, reserve, unreserve } from '$lib/dataHandler';
 
   let product = {};
   let seller;
@@ -115,16 +115,6 @@
       isLoading = false;
     }, 100);
   });
-
-  async function reserve() {
-    await putData(`http://localhost:3010/products/reserve/${product.id}/${product.userID}/${$user.id}`);
-    window.location.reload();
-  }
-
-  async function unreserve() {
-    await putData(`http://localhost:3010/products/unreserve/${product.id}/${product.userID}`);
-    window.location.reload();
-  }
 </script>
 
 {#if isLoading}
@@ -136,15 +126,15 @@
     <h1 class="text-2xl font-bold text-green-700 mb-4">{product.title}</h1>
     <img src="https://via.placeholder.com/800x400" alt="{product.title}" class="w-full h-auto rounded-lg mb-4" />
 
-      {#if seller}
-        {#if userIsSeller}
-          <p class="mb-2"><strong>Verkoper:</strong> Uw Product</p>
-        {:else}
-          <button on:click={() => goto(`/profile/${seller.id}`)} class="mb-2">
-            <strong>Verkoper:</strong> <span class="text-green-800 underline">{seller.name}</span>
-          </button>
-        {/if}
+    {#if seller}
+      {#if userIsSeller}
+        <p class="mb-2"><strong>Verkoper:</strong> Uw Product</p>
+      {:else}
+        <button on:click={() => goto(`/profile/${seller.id}`)} class="mb-2">
+          <strong>Verkoper:</strong> <span class="text-green-800 underline">{seller.name}</span>
+        </button>
       {/if}
+    {/if}
 
     <p class="mb-2"><strong>Omschrijving:</strong> {product.description}</p>
     <p class="mb-2"><strong>Prijs:</strong> <span class="text-green-700 font-bold text-xl">€{product.price.toFixed(2)}</span></p>
@@ -166,7 +156,7 @@
       {#if product.reserved}
         {#if $user.id === product.reservedByUserID}
           <button 
-            on:click={() => unreserve()} 
+            on:click={() => unreserve(product)} 
             class="w-full px-4 py-2 mt-3 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
           >Annuleer reservatie</button>
         {:else}
@@ -178,7 +168,7 @@
         {/if}
       {:else}
         <button 
-          on:click={() => reserve()} 
+          on:click={() => reserve(product, $user)} 
           class="w-full px-4 py-2 mt-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
         >Reserveer</button>
       {/if}
