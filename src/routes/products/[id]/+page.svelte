@@ -143,7 +143,7 @@
     <p class="mb-2"><strong>Ten minste houdbaar tot:</strong> {product.expirationDate || 'Niet beschikbaar'}</p>
 
     {#if distance !== null}
-      <p class="mt-4"><strong>Afstand naar verkoper:</strong> {distance}</p>
+      <p class="mt-4"><strong>Afstand naar verkoper:</strong> {distance} km</p>
     {/if}
 
     {#if $user === null}
